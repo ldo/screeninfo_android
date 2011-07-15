@@ -19,8 +19,18 @@
 	<string name="actual_ydpi_label">Y DPI:</string>
 	<string name="logical_density_label">Logical Density:</string>
 	<string name="font_scale_density_label">Font Scale Density:</string>
-	<string name="computed_diagonal_size_inches_label">Diagonal Size (inches):</string>
-	<string name="computed_diagonal_size_mm_label">Diagonal Size (mm):</string>
+	<string name="screen_diagonal_size_inches_label">Diagonal Size - Screen - (inches):</string>
+	<string name="screen_diagonal_size_mm_label">Diagonal Size - Screen - (mm):</string>
+	<string name="screen_width_size_inches_label">Width Size - Screen - (inches):</string>
+	<string name="screen_width_size_mm_label">Width Size - Screen - (mm):</string>
+	<string name="screen_height_size_inches_label">Height Size - Screen - (inches):</string>
+	<string name="screen_height_size_mm_label">Height Size - Screen - (mm):</string>
+	<string name="xy_diagonal_size_inches_label">Diagonal Size - X + Y - (inches):</string>
+	<string name="xy_diagonal_size_mm_label">Diagonal Size - X + Y - (mm):</string>
+	<string name="xy_width_size_inches_label">Width Size - X + Y - (inches):</string>
+	<string name="xy_width_size_mm_label">Width Size - X + Y - (mm):</string>
+	<string name="xy_height_size_inches_label">Height Size - X + Y - (inches):</string>
+	<string name="xy_height_size_mm_label">Height Size - X + Y - (mm):</string>
 
 	<string name="touchscreen_label">Touchscreen:</string>
 	<string name="touchscreen_none">None</string>
@@ -34,8 +44,13 @@
 	<string name="orientation_portrait">Portrait</string>
 	
 	<string name="long_wide_label">Long or Wide:</string>
+	<string name="large_label">Largeness:</string>
 
 	<string name="yes">Yes</string>
 	<string name="no">No</string>	
+	<string name="small">Small</string>
+	<string name="normal">Normal</string>	
+	<string name="large">Large</string>
+	<string name="xlarge">XLarge</string>
 	<string name="undefined">Undefined</string>
 </resources>

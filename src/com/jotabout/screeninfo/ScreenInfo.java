@@ -126,15 +126,42 @@ public class ScreenInfo extends Activity {
 		}
 		
 		// Calculate physical screen width/height
-		double physicalWidth = ((double) metrics.widthPixels) / xdpi;
-		double physicalHeight = ((double) metrics.heightPixels) / ydpi;
+		double xyPhysicalWidth = ((double) metrics.widthPixels) / xdpi;
+		double xyPhysicalHeight = ((double) metrics.heightPixels) / ydpi;
+		double screenPhysicalWidth = ((double) metrics.widthPixels) / metrics.densityDpi;
+		double screenPhysicalHeight = ((double) metrics.heightPixels) / metrics.densityDpi;
+		
+		// Calculate width and height screen size, in Metric units
+		double xyWidthSizeInches = Math.floor( xyPhysicalWidth * 10.0 + 0.5 ) / 10.0;
+		double xyHeightSizeInches = Math.floor( xyPhysicalHeight * 10.0 + 0.5 ) / 10.0;
+		double xyWidthSizeMillimeters = Math.floor( xyPhysicalWidth * 25.4 + 0.5 );
+		double xyHeightSizeMillimeters = Math.floor( xyPhysicalHeight * 25.4 + 0.5 );
+		double screenWidthSizeInches = Math.floor( screenPhysicalWidth * 10.0 + 0.5 ) / 10.0;
+		double screenHeightSizeInches = Math.floor( screenPhysicalHeight * 10.0 + 0.5 ) / 10.0;
+		double screenWidthSizeMillimeters = Math.floor( screenPhysicalWidth * 25.4 + 0.5 );
+		double screenHeightSizeMillimeters = Math.floor( screenPhysicalHeight * 25.4 + 0.5 );
 		
 		// Calculate diagonal screen size, in both U.S. and Metric units
-		double rawDiagonalSizeInches = Math.sqrt(Math.pow(physicalWidth, 2) + Math.pow(physicalHeight, 2));
-		double diagonalSizeInches = Math.floor( rawDiagonalSizeInches * 10.0 + 0.5 ) / 10.0;
-		double diagonalSizeMillimeters = Math.floor( rawDiagonalSizeInches * 25.4 + 0.5 );
-        ((TextView) findViewById(R.id.computed_diagonal_size_inches)).setText( Double.toString(diagonalSizeInches) );
-        ((TextView) findViewById(R.id.computed_diagonal_size_mm)).setText( Double.toString(diagonalSizeMillimeters) );
+		double xyRawDiagonalSizeInches = Math.sqrt(Math.pow(xyPhysicalWidth, 2) + Math.pow(xyPhysicalHeight, 2));
+		double xyDiagonalSizeInches = Math.floor( xyRawDiagonalSizeInches * 10.0 + 0.5 ) / 10.0;
+		double xyDiagonalSizeMillimeters = Math.floor( xyRawDiagonalSizeInches * 25.4 + 0.5 );
+		double screenRawDiagonalSizeInches = Math.sqrt(Math.pow(screenPhysicalWidth, 2) + Math.pow(screenPhysicalHeight, 2));
+		double screenDiagonalSizeInches = Math.floor( screenRawDiagonalSizeInches * 10.0 + 0.5 ) / 10.0;
+		double screenDiagonalSizeMillimeters = Math.floor( screenRawDiagonalSizeInches * 25.4 + 0.5 );
+		
+		
+        ((TextView) findViewById(R.id.xy_diagonal_size_inches)).setText( Double.toString(xyDiagonalSizeInches) );
+        ((TextView) findViewById(R.id.xy_diagonal_size_mm)).setText( Double.toString(xyDiagonalSizeMillimeters) );
+        ((TextView) findViewById(R.id.xy_width_size_inches)).setText(Double.toString(xyWidthSizeInches));
+        ((TextView) findViewById(R.id.xy_height_size_inches)).setText(Double.toString(xyHeightSizeInches));
+        ((TextView) findViewById(R.id.xy_width_size_mm)).setText(Double.toString(xyWidthSizeMillimeters));
+        ((TextView) findViewById(R.id.xy_height_size_mm)).setText(Double.toString(xyHeightSizeMillimeters));
+        ((TextView) findViewById(R.id.screen_diagonal_size_inches)).setText( Double.toString(screenDiagonalSizeInches) );
+        ((TextView) findViewById(R.id.screen_diagonal_size_mm)).setText( Double.toString(screenDiagonalSizeMillimeters) );
+        ((TextView) findViewById(R.id.screen_width_size_inches)).setText(Double.toString(screenWidthSizeInches));
+        ((TextView) findViewById(R.id.screen_height_size_inches)).setText(Double.toString(screenHeightSizeInches));
+        ((TextView) findViewById(R.id.screen_width_size_mm)).setText(Double.toString(screenWidthSizeMillimeters));
+        ((TextView) findViewById(R.id.screen_height_size_mm)).setText(Double.toString(screenHeightSizeMillimeters));
 	}
 	
 	/**
@@ -142,10 +169,11 @@ public class ScreenInfo extends Activity {
 	 */
 	private void showScreenLongWide() {
         TextView longWideText = ((TextView) findViewById(R.id.long_wide));
+        TextView largeText = ((TextView) findViewById(R.id.large));
         Configuration config = getResources().getConfiguration();
         
-        int screenLayout = config.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK;
-        switch (screenLayout) {
+        int screenLongLayout = config.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK;
+        switch (screenLongLayout) {
         case Configuration.SCREENLAYOUT_LONG_YES:
         	longWideText.setText(R.string.yes);
         	break;
@@ -154,6 +182,25 @@ public class ScreenInfo extends Activity {
         	break;
         case Configuration.SCREENLAYOUT_LONG_UNDEFINED:
         	longWideText.setText(R.string.undefined);
+        	break;
+        }
+        
+        int screenLargeLayout = config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+        switch (screenLargeLayout) {
+        case Configuration.SCREENLAYOUT_SIZE_SMALL:
+        	largeText.setText(R.string.small);
+        	break;
+        case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+        	largeText.setText(R.string.normal);
+        	break;
+        case Configuration.SCREENLAYOUT_SIZE_LARGE:
+        	largeText.setText(R.string.large);
+        	break;
+        case Configuration.SCREENLAYOUT_SIZE_XLARGE:
+        	largeText.setText(R.string.xlarge);
+        	break;
+        case Configuration.SCREENLAYOUT_SIZE_UNDEFINED:
+        	largeText.setText(R.string.undefined);
         	break;
         }
 	}
@@ -277,7 +324,6 @@ public class ScreenInfo extends Activity {
 	        mAbout.setTitle(R.string.about_title);
 	        ((TextView) mAbout.findViewById(R.id.about_version)).setText(appVersion());
 	        ((Button) mAbout.findViewById(R.id.about_dismiss)).setOnClickListener(new View.OnClickListener() {
-				@Override
 				public void onClick(View v) {
 					mAbout.dismiss();
 				}

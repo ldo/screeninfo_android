@@ -93,6 +93,15 @@
 			</TableRow>
 			<TableRow>
 				<TextView
+					android:id="@+id/large_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/large_label"/>
+				<TextView
+					android:id="@+id/large"/>
+			</TableRow>
+			<TableRow>
+				<TextView
 					android:id="@+id/natural_orientation_label"
 					android:textAppearance="@style/label"
 				    android:layout_marginRight="@dimen/label_spacing"
@@ -165,21 +174,111 @@
 			</TableRow>
 			<TableRow>
 				<TextView
-					android:id="@+id/computed_diagonal_size_inches_label"
+					android:id="@+id/screen_diagonal_size_inches_label"
 					android:textAppearance="@style/label"
 				    android:layout_marginRight="@dimen/label_spacing"
-					android:text="@string/computed_diagonal_size_inches_label"/>
+					android:text="@string/screen_diagonal_size_inches_label"/>
 				<TextView
-					android:id="@+id/computed_diagonal_size_inches"/>
+					android:id="@+id/screen_diagonal_size_inches"/>
 			</TableRow>
 			<TableRow>
 				<TextView
-					android:id="@+id/computed_diagonal_size_mm_label"
+					android:id="@+id/xy_diagonal_size_inches_label"
 					android:textAppearance="@style/label"
 				    android:layout_marginRight="@dimen/label_spacing"
-					android:text="@string/computed_diagonal_size_mm_label"/>
+					android:text="@string/xy_diagonal_size_inches_label"/>
 				<TextView
-					android:id="@+id/computed_diagonal_size_mm"/>
+					android:id="@+id/xy_diagonal_size_inches"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/screen_width_size_inches_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/screen_width_size_inches_label"/>
+				<TextView
+					android:id="@+id/screen_width_size_inches"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/xy_width_size_inches_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/xy_width_size_inches_label"/>
+				<TextView
+					android:id="@+id/xy_width_size_inches"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/screen_height_size_inches_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/screen_height_size_inches_label"/>
+				<TextView
+					android:id="@+id/screen_height_size_inches"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/xy_height_size_inches_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/xy_height_size_inches_label"/>
+				<TextView
+					android:id="@+id/xy_height_size_inches"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/screen_diagonal_size_mm_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/screen_diagonal_size_mm_label"/>
+				<TextView
+					android:id="@+id/screen_diagonal_size_mm"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/xy_diagonal_size_mm_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/xy_diagonal_size_mm_label"/>
+				<TextView
+					android:id="@+id/xy_diagonal_size_mm"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/screen_width_size_mm_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/screen_width_size_mm_label"/>
+				<TextView
+					android:id="@+id/screen_width_size_mm"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/xy_width_size_mm_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/xy_width_size_mm_label"/>
+				<TextView
+					android:id="@+id/xy_width_size_mm"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/screen_height_size_mm_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/screen_height_size_mm_label"/>
+				<TextView
+					android:id="@+id/screen_height_size_mm"/>
+			</TableRow>
+			<TableRow>
+				<TextView
+					android:id="@+id/xy_height_size_mm_label"
+					android:textAppearance="@style/label"
+				    android:layout_marginRight="@dimen/label_spacing"
+					android:text="@string/xy_height_size_mm_label"/>
+				<TextView
+					android:id="@+id/xy_height_size_mm"/>
 			</TableRow>
 		</TableLayout>
 	

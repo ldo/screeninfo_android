@@ -42,6 +42,10 @@
 	<string name="orientation_square">Square</string>
 	<string name="orientation_landscape">Landscape</string>
 	<string name="orientation_portrait">Portrait</string>
+	<string name="degrees_0">0°</string>
+	<string name="degrees_90">90°</string>
+	<string name="degrees_180">180°</string>
+	<string name="degrees_270">270°</string>
 	
 	<string name="long_wide_label">Long or Wide:</string>
 
@@ -57,5 +61,6 @@
 	<string name="tvdpi">tvdpi</string>
 	<string name="hdpi">hdpi</string>
 	<string name="xhdpi">xhdpi</string>
+	<string name="xxhdpi">xxhdpi</string>
 	<string name="nosuch">\?</string>
 </resources>

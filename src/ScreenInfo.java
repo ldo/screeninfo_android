@@ -80,8 +80,10 @@ public class ScreenInfo extends Activity {
 	}
 
 	static class CodeName
+	  /* mapping a constant value to a descriptive string resource ID. */
 	  {
 		public final int Value, ResID;
+
 		public CodeName
 		  (
 			int Value,
@@ -110,6 +112,7 @@ public class ScreenInfo extends Activity {
 			new CodeName(/*DisplayMetrics.DENSITY_TV*/ 213, R.string.tvdpi),
 			new CodeName(DisplayMetrics.DENSITY_HIGH, R.string.hdpi),
 			new CodeName(DisplayMetrics.DENSITY_XHIGH, R.string.xhdpi),
+			new CodeName(/*DisplayMetrics.DENSITY_XXHIGH*/ 480, R.string.xxhdpi),
 		};
 
 	String GetCodeName
@@ -117,7 +120,7 @@ public class ScreenInfo extends Activity {
 		int Value,
 		CodeName[] Table
 	  )
-	  /* returns the string resource ID matching the specified table value. */
+	  /* returns the string resource ID from the Table entry with the specified Value. */
 	  {
 		int Result = 0;
 		for (int i = 0;;)
@@ -137,6 +140,163 @@ public class ScreenInfo extends Activity {
 		return
 			getString(Result);
 	  } /*GetCodeName*/
+
+	abstract class InfoMember
+	  /* obtaining and displaying a value from a member of an info structure. */
+	  {
+		final Object InObject;
+		/*final*/ java.lang.reflect.Method ToString;
+		final int TextID;
+
+		public InfoMember
+		  (
+			Object InObject, /* the info structure */
+			int TextID /* ID of TextView to be set to value */
+		  )
+		  {
+			this.InObject = InObject;
+			this.TextID = TextID;
+		  } /*InfoMember*/
+
+		protected void Init
+		  (
+			Class<?> MemberType
+		  )
+		  /* remainder of common initialization that can't be done in constructor. */
+		  {
+			if (MemberType.isPrimitive())
+			  {
+				try
+				  {
+					final String TypeName = MemberType.getName().intern();
+					if (TypeName == "int")
+					  {
+						MemberType = Class.forName("java.lang.Integer");
+					  } /*if*/
+					else if (TypeName == "float")
+					  {
+						MemberType = Class.forName("java.lang.Float");
+					  } /*if*/
+				  /* add other replacements of primitive types here as necessary */
+				  }
+				catch (ClassNotFoundException err)
+				  {
+					throw new RuntimeException(err.toString());
+				  } /*try*/
+			  } /*if*/
+			try
+			  {
+				this.ToString = MemberType.getDeclaredMethod("toString");
+			  }
+			catch (NoSuchMethodException err)
+			  {
+				throw new RuntimeException(err.toString());
+			  } /*try*/
+		  } /*Init*/
+
+		abstract public Object GetValue();
+		  /* must return the value to be displayed. */
+
+		public void ShowValue()
+		  /* sets the field to show the member return value. */
+		  {
+			try
+			  {
+				((TextView)findViewById(TextID)).setText((String)ToString.invoke(GetValue()));
+			  }
+			catch (IllegalAccessException err)
+			  {
+				throw new RuntimeException(err.toString());
+			  }
+			catch (InvocationTargetException err)
+			  {
+				throw new RuntimeException(err.toString());
+			  } /*try*/
+		  } /*ShowValue*/
+
+	  } /*InfoMember*/;
+
+	class InfoField extends InfoMember
+	  /* obtaining and displaying a field value from an info structure. */
+	  {
+		final java.lang.reflect.Field ObjField;
+
+		public InfoField
+		  (
+			Object InObject, /* the info structure */
+			String FieldName, /* value of this field will be shown */
+			int TextID /* ID of TextView to be set to value */
+		  )
+		  {
+			super(InObject, TextID);
+			try
+			  {
+				this.ObjField = InObject.getClass().getDeclaredField(FieldName);
+			  }
+			catch (NoSuchFieldException err)
+			  {
+				throw new RuntimeException(err.toString());
+			  } /*try*/
+			Init(this.ObjField.getType());
+		  } /*InfoField*/
+
+		public Object GetValue()
+		  {
+			try
+			  {
+				return
+					ObjField.get(InObject);
+			  }
+			catch (IllegalAccessException err)
+			  {
+				throw new RuntimeException(err.toString());
+			  } /*try*/
+		  } /*GetValue*/
+
+	  } /*InfoField*/;
+
+	class InfoMethod extends InfoMember
+	  /* obtaining and displaying a method return value from an info structure. */
+	  {
+		final java.lang.reflect.Method ObjMethod;
+
+		public InfoMethod
+		  (
+			Object InObject, /* the info structure */
+			String MethodName, /* must take no arguments */
+			int TextID /* ID of TextView to be set to value */
+		  )
+		  {
+			super(InObject, TextID);
+			try
+			  {
+				this.ObjMethod = InObject.getClass().getDeclaredMethod(MethodName);
+			  }
+			catch (NoSuchMethodException err)
+			  {
+				throw new RuntimeException(err.toString());
+			  } /*try*/
+			Init(this.ObjMethod.getReturnType());
+		  } /*InfoMethod*/
+
+		public Object GetValue()
+		  {
+			try
+			  {
+				return
+					ObjMethod.invoke(InObject);
+			  }
+			catch (IllegalAccessException err)
+			  {
+				throw new RuntimeException(err.toString());
+			  }
+			catch (InvocationTargetException err)
+			  {
+				throw new RuntimeException(err.toString());
+			  } /*try*/
+		  } /*GetValue*/
+
+	  } /*InfoMethod*/;
 
 	/**
      * Show basic information about the device.
@@ -158,14 +318,23 @@ public class ScreenInfo extends Activity {
      * Show the screen metrics (pixel dimensions, density, dpi, etc) for the device.
      */
     public void showScreenMetrics(Display display, DisplayMetrics metrics) {
-    	
-        ((TextView) findViewById(R.id.width_pixels)).setText( Integer.toString(display.getWidth()) );
-        ((TextView) findViewById(R.id.height_pixels)).setText( Integer.toString(display.getHeight()) );
-        ((TextView) findViewById(R.id.screen_dpi)).setText( Integer.toString(metrics.densityDpi) );
-        ((TextView) findViewById(R.id.actual_xdpi)).setText( Float.toString(metrics.xdpi) );
-        ((TextView) findViewById(R.id.actual_ydpi)).setText( Float.toString(metrics.ydpi) );
-        ((TextView) findViewById(R.id.logical_density)).setText( Double.toString(metrics.density) );
-        ((TextView) findViewById(R.id.font_scale_density)).setText( Float.toString(metrics.scaledDensity) );
+		for
+		  (
+			InfoMember Member :
+				new InfoMember[]
+					{
+						new InfoMethod(display, "getWidth", R.id.width_pixels),
+						new InfoMethod(display, "getHeight", R.id.height_pixels),
+						new InfoField(metrics, "densityDpi", R.id.screen_dpi),
+						new InfoField(metrics, "xdpi", R.id.actual_xdpi),
+						new InfoField(metrics, "ydpi", R.id.actual_ydpi),
+						new InfoField(metrics, "density", R.id.logical_density),
+						new InfoField(metrics, "scaledDensity", R.id.font_scale_density),
+					}
+		  )
+		  {
+			Member.ShowValue();
+		  } /*for*/
     }
 
     /**
@@ -177,22 +346,16 @@ public class ScreenInfo extends Activity {
      */
 	private void showScreenDiagonalSize(DisplayMetrics metrics) {
 		
-		double xdpi = metrics.xdpi;
-		if ( xdpi < 1.0 ) {
-			// Guard against divide-by-zero, possible with lazy device manufacturers who set these fields incorrectly
-			// Set the density to our best guess.
-			xdpi = metrics.densityDpi;
-		}
-		double ydpi = metrics.ydpi;
-		if ( ydpi < 1.0 ) {
-			ydpi =  metrics.densityDpi;
-		}
+		// Guard against divide-by-zero, possible with lazy device manufacturers who set these fields incorrectly
+		// Set the density to our best guess.
+		final float xdpi = metrics.xdpi < 1.0f ? metrics.densityDpi : metrics.xdpi;
+		final float ydpi = metrics.ydpi < 1.0f ? metrics.densityDpi : metrics.ydpi;
 		
 		// Calculate physical screen width/height
-		double xyPhysicalWidth = ((double) metrics.widthPixels) / xdpi;
-		double xyPhysicalHeight = ((double) metrics.heightPixels) / ydpi;
-		double screenPhysicalWidth = ((double) metrics.widthPixels) / metrics.densityDpi;
-		double screenPhysicalHeight = ((double) metrics.heightPixels) / metrics.densityDpi;
+		final float xyPhysicalWidth = (float)metrics.widthPixels / xdpi;
+		final float xyPhysicalHeight = (float)metrics.heightPixels / ydpi;
+		final float screenPhysicalWidth = (float)metrics.widthPixels / metrics.densityDpi;
+		final float screenPhysicalHeight = (float)metrics.heightPixels / metrics.densityDpi;
 		
 		// Calculate width and height screen size, in Metric units
 		double xyWidthSizeInches = Math.floor( xyPhysicalWidth * 10.0 + 0.5 ) / 10.0;
@@ -226,26 +389,22 @@ public class ScreenInfo extends Activity {
         ((TextView) findViewById(R.id.screen_width_size_mm)).setText(Double.toString(screenWidthSizeMillimeters));
         ((TextView) findViewById(R.id.screen_height_size_mm)).setText(Double.toString(screenHeightSizeMillimeters));
 	}
+
+	static final CodeName[] LongWideCodes = new CodeName[]
+		{
+			new CodeName(Configuration.SCREENLAYOUT_LONG_YES, R.string.yes),
+			new CodeName(Configuration.SCREENLAYOUT_LONG_NO, R.string.no),
+			new CodeName(Configuration.SCREENLAYOUT_LONG_UNDEFINED, R.string.undefined),
+		};
 	
 	/**
 	 * Display whether or not the device has a display that is longer or wider than normal.
 	 */
 	private void showScreenLongWide(Configuration config) {
-        TextView longWideText = ((TextView) findViewById(R.id.long_wide));
-        
-        int screenLongLayout = config.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK;
-        switch (screenLongLayout) {
-        case Configuration.SCREENLAYOUT_LONG_YES:
-        	longWideText.setText(R.string.yes);
-        	break;
-        case Configuration.SCREENLAYOUT_LONG_NO:
-        	longWideText.setText(R.string.no);
-        	break;
-        case Configuration.SCREENLAYOUT_LONG_UNDEFINED:
-        	longWideText.setText(R.string.undefined);
-        	break;
-        }
-        
+        ((TextView)findViewById(R.id.long_wide)).setText
+		  (
+			GetCodeName(config.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK, LongWideCodes)
+		  );
 	}
 
 	/**
@@ -253,49 +412,57 @@ public class ScreenInfo extends Activity {
 	 */
 	private void showDefaultOrientation(Configuration config) {
 		// Screen default orientation
-        TextView orientationText = ((TextView) findViewById(R.id.natural_orientation));
-        setOrientationText(orientationText, config.orientation);
+        setOrientationText((TextView)findViewById(R.id.natural_orientation), config.orientation);
 	}
+
+	static final CodeName[] RotationAngles = new CodeName[]
+		{
+			new CodeName(Surface.ROTATION_0, R.string.degrees_0),
+			new CodeName(Surface.ROTATION_90, R.string.degrees_90),
+			new CodeName(Surface.ROTATION_180, R.string.degrees_180),
+			new CodeName(Surface.ROTATION_270, R.string.degrees_270),
+		};
 
 	/**
 	 * Display the current screen orientation of the device, with respect to natural orientation.
 	 */
 	private void showCurrentOrientation(Display display) {
-        TextView orientationText = ((TextView) findViewById(R.id.current_orientation));
-		
+        TextView orientationText = ((TextView)findViewById(R.id.current_orientation));
+
+		int rotation = -1;
 		// First, try the Display#getRotation() call, which was introduced in Froyo.
 		// Reference: http://android-developers.blogspot.com/2010/09/one-screen-turn-deserves-another.html
 		try {
 			Method getRotationMethod = display.getClass().getMethod("getRotation");
-			int rotation = (Integer) getRotationMethod.invoke(display);
-			switch (rotation) {
-			case Surface.ROTATION_0:
-				orientationText.setText("0");
-				break;
-			case Surface.ROTATION_90:
-				orientationText.setText("90");
-				break;
-			case Surface.ROTATION_180:
-				orientationText.setText("180");
-				break;
-			case Surface.ROTATION_270:
-				orientationText.setText("270");
-				break;
-			}
-			
-			return;
+			rotation = (Integer)getRotationMethod.invoke(display);
 		}
-		catch (SecurityException ignore) {;}
-		catch (NoSuchMethodException ignore) {;} 
-		catch (IllegalArgumentException ignore) {;}
-		catch (IllegalAccessException ignore) {;}
-		catch (InvocationTargetException ignore) {;}
-		
-		// Fall back on the deprecated Display#getOrientation method from earlier releases of Android.
-		int orientation = display.getOrientation();
-		setOrientationText( orientationText, orientation );
+		catch (SecurityException ignore) {}
+		catch (NoSuchMethodException ignore) {} 
+		catch (IllegalArgumentException ignore) {}
+		catch (IllegalAccessException ignore) {}
+		catch (InvocationTargetException ignore) {}
+		if (rotation >= 0)
+		  {
+			orientationText.setText
+			  (
+				GetCodeName(rotation, RotationAngles)
+			  );
+		  }
+		else
+		  {
+			// Fall back on the deprecated Display#getOrientation method from earlier releases of Android.
+			setOrientationText(orientationText, display.getOrientation());
+		  } /*if*/
 	}
-	
+
+	static final CodeName[] OrientationCodes = new CodeName[]
+		{
+			new CodeName(Configuration.ORIENTATION_LANDSCAPE, R.string.orientation_landscape),
+			new CodeName(Configuration.ORIENTATION_PORTRAIT, R.string.orientation_portrait),
+			new CodeName(Configuration.ORIENTATION_SQUARE, R.string.orientation_square),
+			new CodeName(Configuration.ORIENTATION_UNDEFINED, R.string.undefined),
+		};
+
 	/**
 	 * Helper sets an orientation string in the given text widget.
 	 * 
@@ -303,39 +470,22 @@ public class ScreenInfo extends Activity {
 	 * @param orientation
 	 */
 	private void setOrientationText(TextView orientationText, int orientation) {
-		switch ( orientation ) {
-        case Configuration.ORIENTATION_LANDSCAPE:
-        	orientationText.setText(R.string.orientation_landscape);
-        	break;
-        case Configuration.ORIENTATION_PORTRAIT:
-        	orientationText.setText(R.string.orientation_portrait);
-        	break;
-        case Configuration.ORIENTATION_SQUARE:
-        	orientationText.setText(R.string.orientation_square);
-        	break;
-        case Configuration.ORIENTATION_UNDEFINED:
-        	orientationText.setText(R.string.undefined);
-        	break;
-        }
+		orientationText.setText(GetCodeName(orientation, OrientationCodes));
 	}
+
+	static final CodeName[] TouchScreenCodes = new CodeName[]
+		{
+			new CodeName(Configuration.TOUCHSCREEN_FINGER, R.string.touchscreen_finger),
+			new CodeName(Configuration.TOUCHSCREEN_STYLUS, R.string.touchscreen_stylus),
+			new CodeName(Configuration.TOUCHSCREEN_NOTOUCH, R.string.touchscreen_none),
+			new CodeName(Configuration.TOUCHSCREEN_UNDEFINED, R.string.undefined),
+		};
 	
 	private void showTouchScreen(Configuration config) {
-        TextView touchScreenText = ((TextView) findViewById(R.id.touchscreen));
-        
-        switch (config.touchscreen ) {
-        case Configuration.TOUCHSCREEN_FINGER:
-        	touchScreenText.setText(R.string.touchscreen_finger);
-        	break;
-        case Configuration.TOUCHSCREEN_STYLUS:
-        	touchScreenText.setText(R.string.touchscreen_stylus);        	
-        	break;
-        case Configuration.TOUCHSCREEN_NOTOUCH:
-        	touchScreenText.setText(R.string.touchscreen_none);
-        	break;
-        case Configuration.TOUCHSCREEN_UNDEFINED:
-        	touchScreenText.setText(R.string.undefined);
-        	break;
-        }
+		((TextView)findViewById(R.id.touchscreen)).setText
+		  (
+			GetCodeName(config.touchscreen, TouchScreenCodes)
+		  );
 	}
 	
 	/**

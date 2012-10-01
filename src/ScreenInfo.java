@@ -63,37 +63,104 @@ public class ScreenInfo extends Activity {
     @Override
 	protected void onResume() {
 		super.onResume();
+
+		final WindowManager wm = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
+		final Display display = wm.getDefaultDisplay();
+ 		final DisplayMetrics metrics = new DisplayMetrics();
+		display.getMetrics(metrics);
+        final Configuration config = getResources().getConfiguration();
 		
-        showDeviceInfo();
-        showScreenMetrics();
-    	showScreenDiagonalSize();
-    	showScreenLongWide();
-        showDefaultOrientation();
-        showCurrentOrientation();
-        showTouchScreen();
+        showDeviceInfo(config, metrics);
+        showScreenMetrics(display, metrics);
+    	showScreenDiagonalSize(metrics);
+    	showScreenLongWide(config);
+        showDefaultOrientation(config);
+        showCurrentOrientation(display);
+        showTouchScreen(config);
 	}
+
+	static class CodeName
+	  {
+		public final int Value, ResID;
+		public CodeName
+		  (
+			int Value,
+			int ResID
+		  )
+		  {
+			this.Value = Value;
+			this.ResID = ResID;
+		  } /*CodeName*/
+
+	  } /*CodeName*/;
+
+	static final CodeName[] SizeCodes = new CodeName[]
+		{
+			new CodeName(Configuration.SCREENLAYOUT_SIZE_SMALL, R.string.small),
+			new CodeName(Configuration.SCREENLAYOUT_SIZE_NORMAL, R.string.normal),
+			new CodeName(Configuration.SCREENLAYOUT_SIZE_LARGE, R.string.large),
+			new CodeName(Configuration.SCREENLAYOUT_SIZE_XLARGE, R.string.xlarge),
+			new CodeName(Configuration.SCREENLAYOUT_SIZE_UNDEFINED, R.string.undefined),
+		};
+
+	static final CodeName[] DensityCodes = new CodeName[]
+		{
+			new CodeName(DisplayMetrics.DENSITY_LOW, R.string.ldpi),
+			new CodeName(DisplayMetrics.DENSITY_MEDIUM, R.string.mdpi),
+			new CodeName(/*DisplayMetrics.DENSITY_TV*/ 213, R.string.tvdpi),
+			new CodeName(DisplayMetrics.DENSITY_HIGH, R.string.hdpi),
+			new CodeName(DisplayMetrics.DENSITY_XHIGH, R.string.xhdpi),
+		};
+
+	String GetCodeName
+	  (
+		int Value,
+		CodeName[] Table
+	  )
+	  /* returns the string resource ID matching the specified table value. */
+	  {
+		int Result = 0;
+		for (int i = 0;;)
+		  {
+			if (i == Table.length)
+			  {
+				Result = R.string.nosuch;
+				break;
+			  } /*if*/
+			if (Table[i].Value == Value)
+			  {
+				Result = Table[i].ResID;
+				break;
+			  } /*if*/
+			++i;
+		  } /*for*/
+		return
+			getString(Result);
+	  } /*GetCodeName*/
 
 	/**
      * Show basic information about the device.
      */
-    public void showDeviceInfo() {
+    public void showDeviceInfo(Configuration config, DisplayMetrics metrics) {
         ((TextView) findViewById(R.id.device_name)).setText( Build.MODEL );
         ((TextView) findViewById(R.id.os_version)).setText( Build.VERSION.RELEASE );
+		((TextView)findViewById(R.id.screen_size_name)).setText
+		  (
+			GetCodeName(config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK, SizeCodes)
+		  );
+		((TextView)findViewById(R.id.screen_dpi_name)).setText
+		  (
+			GetCodeName(metrics.densityDpi, DensityCodes)
+		  );
     }
     
     /**
      * Show the screen metrics (pixel dimensions, density, dpi, etc) for the device.
      */
-    public void showScreenMetrics() {
-		WindowManager wm = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
-		Display display = wm.getDefaultDisplay();
+    public void showScreenMetrics(Display display, DisplayMetrics metrics) {
     	
         ((TextView) findViewById(R.id.width_pixels)).setText( Integer.toString(display.getWidth()) );
         ((TextView) findViewById(R.id.height_pixels)).setText( Integer.toString(display.getHeight()) );
-        
-		DisplayMetrics metrics = new DisplayMetrics();
-		display.getMetrics(metrics);
-
         ((TextView) findViewById(R.id.screen_dpi)).setText( Integer.toString(metrics.densityDpi) );
         ((TextView) findViewById(R.id.actual_xdpi)).setText( Float.toString(metrics.xdpi) );
         ((TextView) findViewById(R.id.actual_ydpi)).setText( Float.toString(metrics.ydpi) );
@@ -108,11 +175,7 @@ public class ScreenInfo extends Activity {
      * 
      * @param metrics
      */
-	private void showScreenDiagonalSize() {
-		WindowManager wm = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
-		Display display = wm.getDefaultDisplay();
- 		DisplayMetrics metrics = new DisplayMetrics();
-		display.getMetrics(metrics);
+	private void showScreenDiagonalSize(DisplayMetrics metrics) {
 		
 		double xdpi = metrics.xdpi;
 		if ( xdpi < 1.0 ) {
@@ -167,10 +230,8 @@ public class ScreenInfo extends Activity {
 	/**
 	 * Display whether or not the device has a display that is longer or wider than normal.
 	 */
-	private void showScreenLongWide() {
+	private void showScreenLongWide(Configuration config) {
         TextView longWideText = ((TextView) findViewById(R.id.long_wide));
-        TextView largeText = ((TextView) findViewById(R.id.large));
-        Configuration config = getResources().getConfiguration();
         
         int screenLongLayout = config.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK;
         switch (screenLongLayout) {
@@ -185,42 +246,21 @@ public class ScreenInfo extends Activity {
         	break;
         }
         
-        int screenLargeLayout = config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
-        switch (screenLargeLayout) {
-        case Configuration.SCREENLAYOUT_SIZE_SMALL:
-        	largeText.setText(R.string.small);
-        	break;
-        case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-        	largeText.setText(R.string.normal);
-        	break;
-        case Configuration.SCREENLAYOUT_SIZE_LARGE:
-        	largeText.setText(R.string.large);
-        	break;
-        case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-        	largeText.setText(R.string.xlarge);
-        	break;
-        case Configuration.SCREENLAYOUT_SIZE_UNDEFINED:
-        	largeText.setText(R.string.undefined);
-        	break;
-        }
 	}
 
 	/**
 	 * Display the "natural" screen orientation of the device.
 	 */
-	private void showDefaultOrientation() {
+	private void showDefaultOrientation(Configuration config) {
 		// Screen default orientation
         TextView orientationText = ((TextView) findViewById(R.id.natural_orientation));
-        Configuration config = getResources().getConfiguration();
         setOrientationText(orientationText, config.orientation);
 	}
 
 	/**
 	 * Display the current screen orientation of the device, with respect to natural orientation.
 	 */
-	private void showCurrentOrientation() {
-		WindowManager wm = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
-		Display display = wm.getDefaultDisplay();
+	private void showCurrentOrientation(Display display) {
         TextView orientationText = ((TextView) findViewById(R.id.current_orientation));
 		
 		// First, try the Display#getRotation() call, which was introduced in Froyo.
@@ -279,9 +319,8 @@ public class ScreenInfo extends Activity {
         }
 	}
 	
-	private void showTouchScreen() {
+	private void showTouchScreen(Configuration config) {
         TextView touchScreenText = ((TextView) findViewById(R.id.touchscreen));
-        Configuration config = getResources().getConfiguration();
         
         switch (config.touchscreen ) {
         case Configuration.TOUCHSCREEN_FINGER:

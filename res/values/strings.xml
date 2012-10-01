@@ -44,13 +44,18 @@
 	<string name="orientation_portrait">Portrait</string>
 	
 	<string name="long_wide_label">Long or Wide:</string>
-	<string name="large_label">Largeness:</string>
 
 	<string name="yes">Yes</string>
 	<string name="no">No</string>	
-	<string name="small">Small</string>
-	<string name="normal">Normal</string>	
-	<string name="large">Large</string>
-	<string name="xlarge">XLarge</string>
-	<string name="undefined">Undefined</string>
+	<string name="small">small</string>
+	<string name="normal">normal</string>	
+	<string name="large">large</string>
+	<string name="xlarge">xlarge</string>
+	<string name="undefined">undefined</string>
+	<string name="ldpi">ldpi</string>
+	<string name="mdpi">ldpi</string>
+	<string name="tvdpi">tvdpi</string>
+	<string name="hdpi">hdpi</string>
+	<string name="xhdpi">xhdpi</string>
+	<string name="nosuch">\?</string>
 </resources>

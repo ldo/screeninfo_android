@@ -46,13 +46,26 @@
 			android:layout_height="30dp"
 			android:background="@drawable/rule_line"/>
 	
-		<ImageView
+		<LinearLayout
 			android:id="@+id/display"
-			android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="center_horizontal"
-		    android:layout_below="@id/os_version_label"
-		    android:src="@drawable/display"/>
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/os_version_label"
+		>
+			<TextView
+				android:id="@+id/screen_size_name"
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+			/>
+			<TextView
+				android:id="@+id/screen_dpi_name"
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+			/>
+	    </LinearLayout>
 		 
 		<View
 			android:layout_width="match_parent"
@@ -90,15 +103,6 @@
 					android:text="@string/long_wide_label"/>
 				<TextView
 					android:id="@+id/long_wide"/>
-			</TableRow>
-			<TableRow>
-				<TextView
-					android:id="@+id/large_label"
-					android:textAppearance="@style/label"
-				    android:layout_marginRight="@dimen/label_spacing"
-					android:text="@string/large_label"/>
-				<TextView
-					android:id="@+id/large"/>
 			</TableRow>
 			<TableRow>
 				<TextView

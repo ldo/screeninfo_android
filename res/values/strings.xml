@@ -50,7 +50,25 @@
 	<string name="degrees_90">90°</string>
 	<string name="degrees_180">180°</string>
 	<string name="degrees_270">270°</string>
-	
+
+	<string name="a_8">A_8</string>
+	<string name="jpeg">JPEG</string>
+	<string name="l_8">L_*</string>
+	<string name="la_88">LA_88</string>
+	<string name="opaque">OPAQUE</string>
+	<string name="rgb_332">RGB_332</string>
+	<string name="rgb_565">RGB_565</string>
+	<string name="rgb_888">RGB_888</string>
+	<string name="rgba_4444">RGBA_4444</string>
+	<string name="rgba_5551">RGBA_5551</string>
+	<string name="rgba_8888">RGBA_8888</string>
+	<string name="rgbx_8888">RGBX_8888</string>
+	<string name="translucent">TRANSLUCENT</string>
+	<string name="transparent">TRANSPARENT</string>
+	<string name="nv21">NV21</string>
+	<string name="yuy2">YUY2</string>
+	<string name="nv16">NV16</string>
+
 	<string name="long_wide_label">Long or Wide:</string>
  
 	<string name="pixel_format_label">Pixel Format:</string>
@@ -70,5 +88,5 @@
 	<string name="hdpi">hdpi</string>
 	<string name="xhdpi">xhdpi</string>
 	<string name="xxhdpi">xxhdpi</string>
-	<string name="nosuch">\?</string>
+	<string name="nosuch">\?%d</string>
 </resources>

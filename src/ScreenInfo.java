@@ -131,10 +131,7 @@ public class ScreenInfo extends Activity {
 		for (int i = 0;;)
 		  {
 			if (i == Table.length)
-			  {
-				Result = R.string.nosuch;
 				break;
-			  } /*if*/
 			if (Table[i].Value == Value)
 			  {
 				Result = Table[i].ResID;
@@ -143,7 +140,10 @@ public class ScreenInfo extends Activity {
 			++i;
 		  } /*for*/
 		return
-			getString(Result);
+            Result != 0 ?
+    			getString(Result)
+            :
+                String.format(getString(R.string.nosuch), Value);
 	  } /*GetCodeName*/
 
 	abstract class InfoMember
@@ -519,71 +519,37 @@ public class ScreenInfo extends Activity {
 			GetCodeName(config.touchscreen, TouchScreenCodes)
 		  );
 	}
- 	
+
+    static final CodeName[] PixelFormatCodes = new CodeName[]
+        {
+            new CodeName(PixelFormat.A_8, R.string.a_8),
+            new CodeName(PixelFormat.JPEG, R.string.jpeg),
+            new CodeName(PixelFormat.L_8, R.string.l_8),
+            new CodeName(PixelFormat.LA_88, R.string.la_88),
+            new CodeName(PixelFormat.OPAQUE, R.string.opaque),
+            new CodeName(PixelFormat.RGB_332, R.string.rgb_332),
+            new CodeName(PixelFormat.RGB_565, R.string.rgb_565),
+            new CodeName(PixelFormat.RGB_888, R.string.rgb_888),
+            new CodeName(PixelFormat.RGBA_4444, R.string.rgba_4444),
+            new CodeName(PixelFormat.RGBA_5551, R.string.rgba_5551),
+            new CodeName(PixelFormat.RGBA_8888, R.string.rgba_8888),
+            new CodeName(PixelFormat.RGBX_8888, R.string.rgbx_8888),
+            new CodeName(PixelFormat.TRANSLUCENT, R.string.translucent),
+            new CodeName(PixelFormat.TRANSPARENT, R.string.transparent),
+            new CodeName(PixelFormat.UNKNOWN, R.string.unknown),
+            new CodeName(ImageFormat.NV21, R.string.nv21),
+            new CodeName(ImageFormat.YUY2, R.string.yuy2),
+            new CodeName(ImageFormat.NV16, R.string.nv16),
+        };
+
  	/**
 	 * Display pixel format
 	 */
 	private void showPixelFormat(Display display) {
-        TextView pixelFormatText = ((TextView) findViewById(R.id.pixel_format));
-		int format = display.getPixelFormat();
-		switch ( format ) {
-		case PixelFormat.A_8:
-			pixelFormatText.setText("A_8");
-			break;
-		case ImageFormat.JPEG:
-			pixelFormatText.setText("JPEG");
-			break;
-		case PixelFormat.L_8:
-			pixelFormatText.setText("L_8");
-			break;			
-		case PixelFormat.LA_88:
-			pixelFormatText.setText("LA_88");
-			break;			
-		case PixelFormat.OPAQUE:
-			pixelFormatText.setText("OPAQUE");
-			break;			
-		case PixelFormat.RGB_332:
-			pixelFormatText.setText("RGB_332");
-			break;			
-		case PixelFormat.RGB_565:
-			pixelFormatText.setText("RGB_565");
-			break;			
-		case PixelFormat.RGB_888:
-			pixelFormatText.setText("RGB_888");
-			break;			
-		case PixelFormat.RGBA_4444:
-			pixelFormatText.setText("RGBA_4444");
-			break;			
-		case PixelFormat.RGBA_5551:
-			pixelFormatText.setText("RGBA_5551");
-			break;
-		case PixelFormat.RGBA_8888:
-			pixelFormatText.setText("RGBA_8888");
-			break;			
-		case PixelFormat.RGBX_8888:
-			pixelFormatText.setText("RGBX_8888");
-			break;			
-		case PixelFormat.TRANSLUCENT:
-			pixelFormatText.setText("TRANSLUCENT");
-			break;			
-		case PixelFormat.TRANSPARENT:
-			pixelFormatText.setText("TRANSPARENT");
-			break;			
-		case PixelFormat.UNKNOWN:
-			pixelFormatText.setText("UNKNOWN");
-			break;			
-		case ImageFormat.NV21:
-			pixelFormatText.setText("NV21");
-			break;			
-		case ImageFormat.YUY2:
-			pixelFormatText.setText("YUY2");
-			break;			
-		case ImageFormat.NV16:
-			pixelFormatText.setText("NV16");
-			break;
-		default:
-			pixelFormatText.setText(R.string.unknown);
-		}
+        ((TextView) findViewById(R.id.pixel_format)).setText
+          (
+            GetCodeName(display.getPixelFormat(), PixelFormatCodes)
+          );
 	}
 	
 	/**

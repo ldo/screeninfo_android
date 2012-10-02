@@ -12,21 +12,25 @@
         
 	<string name="device_label">Device Name:</string>
 	<string name="os_version_label">Android Version:</string>
-	<string name="width_pixels_label">Width:</string>
-	<string name="height_pixels_label">Height:</string>
+
+	<string name="width_pixels_label">Width (px):</string>
+	<string name="height_pixels_label">Height (px):</string>
+	<string name="width_dp_label">Width (dp):</string>
+	<string name="height_dp_label">Height (dp):</string>
+	<string name="smallest_dp_label">Smallest DP:</string>
 	<string name="screen_dpi_label">Screen DPI:</string>
 	<string name="actual_xdpi_label">X DPI:</string>
 	<string name="actual_ydpi_label">Y DPI:</string>
 	<string name="logical_density_label">Logical Density:</string>
 	<string name="font_scale_density_label">Font Scale Density:</string>
-	<string name="screen_diagonal_size_inches_label">Diagonal Size - Screen - (inches):</string>
-	<string name="screen_diagonal_size_mm_label">Diagonal Size - Screen - (mm):</string>
+	<string name="screen_diagonal_size_inches_label">Calc’d Diag - Screen - (inches):</string>
+	<string name="screen_diagonal_size_mm_label">Calc’d Diag - Screen - (mm):</string>
 	<string name="screen_width_size_inches_label">Width Size - Screen - (inches):</string>
 	<string name="screen_width_size_mm_label">Width Size - Screen - (mm):</string>
 	<string name="screen_height_size_inches_label">Height Size - Screen - (inches):</string>
 	<string name="screen_height_size_mm_label">Height Size - Screen - (mm):</string>
-	<string name="xy_diagonal_size_inches_label">Diagonal Size - X + Y - (inches):</string>
-	<string name="xy_diagonal_size_mm_label">Diagonal Size - X + Y - (mm):</string>
+	<string name="xy_diagonal_size_inches_label">Diag Size - X + Y - (inches):</string>
+	<string name="xy_diagonal_size_mm_label">Diag Size - X + Y - (mm):</string>
 	<string name="xy_width_size_inches_label">Width Size - X + Y - (inches):</string>
 	<string name="xy_width_size_mm_label">Width Size - X + Y - (mm):</string>
 	<string name="xy_height_size_inches_label">Height Size - X + Y - (inches):</string>
@@ -48,6 +52,9 @@
 	<string name="degrees_270">270°</string>
 	
 	<string name="long_wide_label">Long or Wide:</string>
+ 
+	<string name="pixel_format_label">Pixel Format:</string>
+	<string name="refresh_rate_label">Refresh Rate (fps):</string>
 
 	<string name="yes">Yes</string>
 	<string name="no">No</string>	
@@ -56,6 +63,7 @@
 	<string name="large">large</string>
 	<string name="xlarge">xlarge</string>
 	<string name="undefined">undefined</string>
+	<string name="unknown">Unknown</string>
 	<string name="ldpi">ldpi</string>
 	<string name="mdpi">ldpi</string>
 	<string name="tvdpi">tvdpi</string>

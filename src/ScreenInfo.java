@@ -27,124 +27,62 @@ package com.jotabout.screeninfo;
  * THE SOFTWARE.
  */
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
-import android.graphics.ImageFormat;
-import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * Main activity class.  Displays information to user.
+ */
 public class ScreenInfo extends Activity {
+	
+	//////////////////////////////////////////////////////////////////////////
+	// Constants
+	//////////////////////////////////////////////////////////////////////////
 	
 	private final static int ABOUT_DIALOG = 1;
 	private final static int MENU_ABOUT = Menu.FIRST;
+	
+	//////////////////////////////////////////////////////////////////////////
+	// State
+	//////////////////////////////////////////////////////////////////////////
+
 	Dialog mAbout;
+	Screen mScreen;
+	
+	//////////////////////////////////////////////////////////////////////////
+	// Activity Lifecycle
+	//////////////////////////////////////////////////////////////////////////
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        mScreen = new Screen(this);
     }
     
     @Override
 	protected void onResume() {
 		super.onResume();
-
-		final WindowManager wm = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
-		final Display display = wm.getDefaultDisplay();
- 		final DisplayMetrics metrics = new DisplayMetrics();
-		display.getMetrics(metrics);
-        final Configuration config = getResources().getConfiguration();
 		
-        showDeviceInfo(config, metrics);
-        showScreenMetrics(display, metrics);
-    	showScreenDiagonalSize(metrics);
-    	showScreenLongWide(config);
-        showDefaultOrientation(config);
-        showCurrentOrientation(display);
-        showTouchScreen(config);
-        showPixelFormat(display);
-        showRefreshRate(display);
+        showDeviceInfo();
+        showScreenMetrics();
+    	showScreenDiagonalSize();
+        ShowInfoRest();
 	}
-
-	static class CodeName
-	  /* mapping a constant value to a descriptive string resource ID. */
-	  {
-		public final int Value, ResID;
-
-		public CodeName
-		  (
-			int Value,
-			int ResID
-		  )
-		  {
-			this.Value = Value;
-			this.ResID = ResID;
-		  } /*CodeName*/
-
-	  } /*CodeName*/;
-
-	static final CodeName[] SizeCodes = new CodeName[]
-		{
-			new CodeName(Configuration.SCREENLAYOUT_SIZE_SMALL, R.string.small),
-			new CodeName(Configuration.SCREENLAYOUT_SIZE_NORMAL, R.string.normal),
-			new CodeName(Configuration.SCREENLAYOUT_SIZE_LARGE, R.string.large),
-			new CodeName(Configuration.SCREENLAYOUT_SIZE_XLARGE, R.string.xlarge),
-			new CodeName(Configuration.SCREENLAYOUT_SIZE_UNDEFINED, R.string.undefined),
-		};
-
-	static final CodeName[] DensityCodes = new CodeName[]
-		{
-			new CodeName(DisplayMetrics.DENSITY_LOW, R.string.ldpi),
-			new CodeName(DisplayMetrics.DENSITY_MEDIUM, R.string.mdpi),
-			new CodeName(/*DisplayMetrics.DENSITY_TV*/ 213, R.string.tvdpi),
-			new CodeName(DisplayMetrics.DENSITY_HIGH, R.string.hdpi),
-			new CodeName(DisplayMetrics.DENSITY_XHIGH, R.string.xhdpi),
-			new CodeName(/*DisplayMetrics.DENSITY_XXHIGH*/ 480, R.string.xxhdpi),
-		};
-
-	String GetCodeName
-	  (
-		int Value,
-		CodeName[] Table
-	  )
-	  /* returns the string resource ID from the Table entry with the specified Value. */
-	  {
-		int Result = 0;
-		for (int i = 0;;)
-		  {
-			if (i == Table.length)
-				break;
-			if (Table[i].Value == Value)
-			  {
-				Result = Table[i].ResID;
-				break;
-			  } /*if*/
-			++i;
-		  } /*for*/
-		return
-            Result != 0 ?
-    			getString(Result)
-            :
-                String.format(getString(R.string.nosuch), Value);
-	  } /*GetCodeName*/
+    
+	//////////////////////////////////////////////////////////////////////////
+	// Info Display
+	//////////////////////////////////////////////////////////////////////////
 
 	abstract class InfoMember
 	  /* obtaining and displaying a value from a member of an info structure. */
@@ -177,10 +115,14 @@ public class ScreenInfo extends Activity {
 					if (TypeName == "int")
 					  {
 						MemberType = Class.forName("java.lang.Integer");
-					  } /*if*/
+					  }
 					else if (TypeName == "float")
 					  {
 						MemberType = Class.forName("java.lang.Float");
+					  }
+					else if (TypeName == "double")
+					  {
+						MemberType = Class.forName("java.lang.Double");
 					  } /*if*/
 				  /* add other replacements of primitive types here as necessary */
 				  }
@@ -213,7 +155,7 @@ public class ScreenInfo extends Activity {
 			  {
 				throw new RuntimeException(err.toString());
 			  }
-			catch (InvocationTargetException err)
+			catch (java.lang.reflect.InvocationTargetException err)
 			  {
 				throw new RuntimeException(err.toString());
 			  } /*try*/
@@ -295,7 +237,7 @@ public class ScreenInfo extends Activity {
 			  {
 				throw new RuntimeException(err.toString());
 			  }
-			catch (InvocationTargetException err)
+			catch (java.lang.reflect.InvocationTargetException err)
 			  {
 				throw new RuntimeException(err.toString());
 			  } /*try*/
@@ -306,64 +248,43 @@ public class ScreenInfo extends Activity {
 	/**
      * Show basic information about the device.
      */
-    public void showDeviceInfo(Configuration config, DisplayMetrics metrics) {
+    public void showDeviceInfo() {
         ((TextView) findViewById(R.id.device_name)).setText( Build.MODEL );
         ((TextView) findViewById(R.id.os_version)).setText( Build.VERSION.RELEASE );
 		((TextView)findViewById(R.id.screen_size_name)).setText
 		  (
-			GetCodeName(config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK, SizeCodes)
+			mScreen.GetSizeName()
 		  );
 		((TextView)findViewById(R.id.screen_dpi_name)).setText
 		  (
-			GetCodeName(metrics.densityDpi, DensityCodes)
+			mScreen.GetDensityName()
 		  );
     }
     
     /**
      * Show the screen metrics (pixel dimensions, density, dpi, etc) for the device.
      */
-    public void showScreenMetrics(Display display, DisplayMetrics metrics) {
-		int widthPx;
-		int heightPx;
-		try {
-			// Try to get size without the Status bar, if we can (API level 13)
-			Method getSizeMethod = display.getClass().getMethod("getSize", Point.class);
-			Point pt = new Point();
-			getSizeMethod.invoke( display, pt );
-			widthPx = pt.x;
-			heightPx = pt.y;
-		} catch (Exception ignore) {
-			// Use older APIs
-			widthPx = display.getWidth();
-			heightPx = display.getHeight();
-		}
-        ((TextView) findViewById(R.id.width_pixels)).setText( Integer.toString(widthPx) );
-        ((TextView) findViewById(R.id.height_pixels)).setText( Integer.toString(heightPx) );
-
+    public void showScreenMetrics() {
 		for
 		  (
 			InfoMember Member :
 				new InfoMember[]
 					{
-						new InfoField(metrics, "densityDpi", R.id.screen_dpi),
-						new InfoField(metrics, "xdpi", R.id.actual_xdpi),
-						new InfoField(metrics, "ydpi", R.id.actual_ydpi),
-						new InfoField(metrics, "density", R.id.logical_density),
-						new InfoField(metrics, "scaledDensity", R.id.font_scale_density),
+                        new InfoField(mScreen, "widthPx", R.id.width_pixels),
+                        new InfoField(mScreen, "heightPx", R.id.height_pixels),
+                        new InfoField(mScreen, "widthDp", R.id.width_dp),
+                        new InfoField(mScreen, "heightDp", R.id.height_dp),
+                        new InfoField(mScreen, "smallestDp", R.id.smallest_dp),
+						new InfoField(mScreen, "densityDpi", R.id.screen_dpi),
+						new InfoField(mScreen, "xdpi", R.id.actual_xdpi),
+						new InfoField(mScreen, "ydpi", R.id.actual_ydpi),
+						new InfoField(mScreen, "density", R.id.logical_density),
+						new InfoField(mScreen, "scaledDensity", R.id.font_scale_density),
 					}
 		  )
 		  {
 			Member.ShowValue();
 		  } /*for*/
-		
-		// Calculate screen sizes in device-independent pixels (dp)
-		int widthDp = (int) (((double) widthPx / metrics.density) + 0.5);
-		int heightDp = (int) (((double) heightPx / metrics.density) + 0.5);
-		int smallestDp = widthDp > heightDp ? heightDp : widthDp;
-
-        ((TextView) findViewById(R.id.width_dp)).setText( Integer.toString(widthDp) );
-        ((TextView) findViewById(R.id.height_dp)).setText( Integer.toString(heightDp) );
-        ((TextView) findViewById(R.id.smallest_dp)).setText( Integer.toString(smallestDp) );
     }
 
     /**
@@ -373,191 +294,55 @@ public class ScreenInfo extends Activity {
      * 
      * @param metrics
      */
-	private void showScreenDiagonalSize(DisplayMetrics metrics) {
-		
-		// Guard against divide-by-zero, possible with lazy device manufacturers who set these fields incorrectly
-		// Set the density to our best guess.
-		final float xdpi = metrics.xdpi < 1.0f ? metrics.densityDpi : metrics.xdpi;
-		final float ydpi = metrics.ydpi < 1.0f ? metrics.densityDpi : metrics.ydpi;
-		
-		// Calculate physical screen width/height
-		final float xyPhysicalWidth = (float)metrics.widthPixels / xdpi;
-		final float xyPhysicalHeight = (float)metrics.heightPixels / ydpi;
-		final float screenPhysicalWidth = (float)metrics.widthPixels / metrics.densityDpi;
-		final float screenPhysicalHeight = (float)metrics.heightPixels / metrics.densityDpi;
-		
-		// Calculate width and height screen size, in Metric units
-		double xyWidthSizeInches = Math.floor( xyPhysicalWidth * 10.0 + 0.5 ) / 10.0;
-		double xyHeightSizeInches = Math.floor( xyPhysicalHeight * 10.0 + 0.5 ) / 10.0;
-		double xyWidthSizeMillimeters = Math.floor( xyPhysicalWidth * 25.4 + 0.5 );
-		double xyHeightSizeMillimeters = Math.floor( xyPhysicalHeight * 25.4 + 0.5 );
-		double screenWidthSizeInches = Math.floor( screenPhysicalWidth * 10.0 + 0.5 ) / 10.0;
-		double screenHeightSizeInches = Math.floor( screenPhysicalHeight * 10.0 + 0.5 ) / 10.0;
-		double screenWidthSizeMillimeters = Math.floor( screenPhysicalWidth * 25.4 + 0.5 );
-		double screenHeightSizeMillimeters = Math.floor( screenPhysicalHeight * 25.4 + 0.5 );
-		
-		// Calculate diagonal screen size, in both U.S. and Metric units
-		double xyRawDiagonalSizeInches = Math.sqrt(Math.pow(xyPhysicalWidth, 2) + Math.pow(xyPhysicalHeight, 2));
-		double xyDiagonalSizeInches = Math.floor( xyRawDiagonalSizeInches * 10.0 + 0.5 ) / 10.0;
-		double xyDiagonalSizeMillimeters = Math.floor( xyRawDiagonalSizeInches * 25.4 + 0.5 );
-		double screenRawDiagonalSizeInches = Math.sqrt(Math.pow(screenPhysicalWidth, 2) + Math.pow(screenPhysicalHeight, 2));
-		double screenDiagonalSizeInches = Math.floor( screenRawDiagonalSizeInches * 10.0 + 0.5 ) / 10.0;
-		double screenDiagonalSizeMillimeters = Math.floor( screenRawDiagonalSizeInches * 25.4 + 0.5 );
-		
-		
-        ((TextView) findViewById(R.id.xy_diagonal_size_inches)).setText( Double.toString(xyDiagonalSizeInches) );
-        ((TextView) findViewById(R.id.xy_diagonal_size_mm)).setText( Double.toString(xyDiagonalSizeMillimeters) );
-        ((TextView) findViewById(R.id.xy_width_size_inches)).setText(Double.toString(xyWidthSizeInches));
-        ((TextView) findViewById(R.id.xy_height_size_inches)).setText(Double.toString(xyHeightSizeInches));
-        ((TextView) findViewById(R.id.xy_width_size_mm)).setText(Double.toString(xyWidthSizeMillimeters));
-        ((TextView) findViewById(R.id.xy_height_size_mm)).setText(Double.toString(xyHeightSizeMillimeters));
-        ((TextView) findViewById(R.id.screen_diagonal_size_inches)).setText( Double.toString(screenDiagonalSizeInches) );
-        ((TextView) findViewById(R.id.screen_diagonal_size_mm)).setText( Double.toString(screenDiagonalSizeMillimeters) );
-        ((TextView) findViewById(R.id.screen_width_size_inches)).setText(Double.toString(screenWidthSizeInches));
-        ((TextView) findViewById(R.id.screen_height_size_inches)).setText(Double.toString(screenHeightSizeInches));
-        ((TextView) findViewById(R.id.screen_width_size_mm)).setText(Double.toString(screenWidthSizeMillimeters));
-        ((TextView) findViewById(R.id.screen_height_size_mm)).setText(Double.toString(screenHeightSizeMillimeters));
-	}
-
-	static final CodeName[] LongWideCodes = new CodeName[]
-		{
-			new CodeName(Configuration.SCREENLAYOUT_LONG_YES, R.string.yes),
-			new CodeName(Configuration.SCREENLAYOUT_LONG_NO, R.string.no),
-			new CodeName(Configuration.SCREENLAYOUT_LONG_UNDEFINED, R.string.undefined),
-		};
-	
-	/**
-	 * Display whether or not the device has a display that is longer or wider than normal.
-	 */
-	private void showScreenLongWide(Configuration config) {
-        ((TextView)findViewById(R.id.long_wide)).setText
+	private void showScreenDiagonalSize() {
+		for
 		  (
-			GetCodeName(config.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK, LongWideCodes)
-		  );
-	}
-
-	/**
-	 * Display the "natural" screen orientation of the device.
-	 */
-	private void showDefaultOrientation(Configuration config) {
-		// Screen default orientation
-        setOrientationText((TextView)findViewById(R.id.natural_orientation), config.orientation);
-	}
-
-	static final CodeName[] RotationAngles = new CodeName[]
-		{
-			new CodeName(Surface.ROTATION_0, R.string.degrees_0),
-			new CodeName(Surface.ROTATION_90, R.string.degrees_90),
-			new CodeName(Surface.ROTATION_180, R.string.degrees_180),
-			new CodeName(Surface.ROTATION_270, R.string.degrees_270),
-		};
-
-	/**
-	 * Display the current screen orientation of the device, with respect to natural orientation.
-	 */
-	private void showCurrentOrientation(Display display) {
-        TextView orientationText = ((TextView)findViewById(R.id.current_orientation));
-
-		int rotation = -1;
-		// First, try the Display#getRotation() call, which was introduced in Froyo.
-		// Reference: http://android-developers.blogspot.com/2010/09/one-screen-turn-deserves-another.html
-		try {
-			Method getRotationMethod = display.getClass().getMethod("getRotation");
-			rotation = (Integer)getRotationMethod.invoke(display);
-		}
-		catch (SecurityException ignore) {}
-		catch (NoSuchMethodException ignore) {} 
-		catch (IllegalArgumentException ignore) {}
-		catch (IllegalAccessException ignore) {}
-		catch (InvocationTargetException ignore) {}
-		if (rotation >= 0)
+			InfoMember Member :
+				new InfoMember[]
+					{
+                        new InfoField(mScreen, "xyDiagonalSizeInches", R.id.xy_diagonal_size_inches),
+                        new InfoField(mScreen, "xyDiagonalSizeMillimeters", R.id.xy_diagonal_size_mm),
+                        new InfoField(mScreen, "xyWidthSizeInches", R.id.xy_width_size_inches),
+                        new InfoField(mScreen, "xyHeightSizeInches", R.id.xy_height_size_inches),
+                        new InfoField(mScreen, "xyWidthSizeMillimeters", R.id.xy_width_size_mm),
+                        new InfoField(mScreen, "xyHeightSizeMillimeters", R.id.xy_height_size_mm),
+                        new InfoField(mScreen, "screenDiagonalSizeInches", R.id.screen_diagonal_size_inches),
+                        new InfoField(mScreen, "screenDiagonalSizeMillimeters", R.id.screen_diagonal_size_mm),
+                        new InfoField(mScreen, "screenWidthSizeInches", R.id.screen_width_size_inches),
+                        new InfoField(mScreen, "screenHeightSizeInches", R.id.screen_height_size_inches),
+                        new InfoField(mScreen, "screenWidthSizeMillimeters", R.id.screen_width_size_mm),
+                        new InfoField(mScreen, "screenHeightSizeMillimeters", R.id.screen_height_size_mm),
+					}
+		  )
 		  {
-			orientationText.setText
-			  (
-				GetCodeName(rotation, RotationAngles)
-			  );
-		  }
-		else
-		  {
-			// Fall back on the deprecated Display#getOrientation method from earlier releases of Android.
-			setOrientationText(orientationText, display.getOrientation());
-		  } /*if*/
+			Member.ShowValue();
+		  } /*for*/
 	}
-
-	static final CodeName[] OrientationCodes = new CodeName[]
-		{
-			new CodeName(Configuration.ORIENTATION_LANDSCAPE, R.string.orientation_landscape),
-			new CodeName(Configuration.ORIENTATION_PORTRAIT, R.string.orientation_portrait),
-			new CodeName(Configuration.ORIENTATION_SQUARE, R.string.orientation_square),
-			new CodeName(Configuration.ORIENTATION_UNDEFINED, R.string.undefined),
-		};
-
-	/**
-	 * Helper sets an orientation string in the given text widget.
-	 * 
-	 * @param orientationText
-	 * @param orientation
-	 */
-	private void setOrientationText(TextView orientationText, int orientation) {
-		orientationText.setText(GetCodeName(orientation, OrientationCodes));
-	}
-
-	static final CodeName[] TouchScreenCodes = new CodeName[]
-		{
-			new CodeName(Configuration.TOUCHSCREEN_FINGER, R.string.touchscreen_finger),
-			new CodeName(Configuration.TOUCHSCREEN_STYLUS, R.string.touchscreen_stylus),
-			new CodeName(Configuration.TOUCHSCREEN_NOTOUCH, R.string.touchscreen_none),
-			new CodeName(Configuration.TOUCHSCREEN_UNDEFINED, R.string.undefined),
-		};
 	
-	/**
-	 * Display touchscreen properties
-	 */
-	private void showTouchScreen(Configuration config) {
-		((TextView)findViewById(R.id.touchscreen)).setText
+    private void ShowInfoRest()
+      {
+		for
 		  (
-			GetCodeName(config.touchscreen, TouchScreenCodes)
-		  );
-	}
-
-    static final CodeName[] PixelFormatCodes = new CodeName[]
-        {
-            new CodeName(PixelFormat.A_8, R.string.a_8),
-            new CodeName(PixelFormat.JPEG, R.string.jpeg),
-            new CodeName(PixelFormat.L_8, R.string.l_8),
-            new CodeName(PixelFormat.LA_88, R.string.la_88),
-            new CodeName(PixelFormat.OPAQUE, R.string.opaque),
-            new CodeName(PixelFormat.RGB_332, R.string.rgb_332),
-            new CodeName(PixelFormat.RGB_565, R.string.rgb_565),
-            new CodeName(PixelFormat.RGB_888, R.string.rgb_888),
-            new CodeName(PixelFormat.RGBA_4444, R.string.rgba_4444),
-            new CodeName(PixelFormat.RGBA_5551, R.string.rgba_5551),
-            new CodeName(PixelFormat.RGBA_8888, R.string.rgba_8888),
-            new CodeName(PixelFormat.RGBX_8888, R.string.rgbx_8888),
-            new CodeName(PixelFormat.TRANSLUCENT, R.string.translucent),
-            new CodeName(PixelFormat.TRANSPARENT, R.string.transparent),
-            new CodeName(PixelFormat.UNKNOWN, R.string.unknown),
-            new CodeName(ImageFormat.NV21, R.string.nv21),
-            new CodeName(ImageFormat.YUY2, R.string.yuy2),
-            new CodeName(ImageFormat.NV16, R.string.nv16),
-        };
-
- 	/**
-	 * Display pixel format
-	 */
-	private void showPixelFormat(Display display) {
-        ((TextView) findViewById(R.id.pixel_format)).setText
-          (
-            GetCodeName(display.getPixelFormat(), PixelFormatCodes)
-          );
-	}
+			InfoMember Member :
+				new InfoMember[]
+					{
+                        new InfoMethod(mScreen, "screenLayoutText", R.id.long_wide),
+                        new InfoMethod(mScreen, "defaultOrientationText", R.id.natural_orientation),
+                        new InfoMethod(mScreen, "currentOrientationText", R.id.current_orientation),
+                        new InfoMethod(mScreen, "touchScreenText", R.id.touchscreen),
+                        new InfoMethod(mScreen, "pixelFormatText", R.id.pixel_format),
+                        new InfoField(mScreen, "refreshRate", R.id.refresh_rate),
+					}
+		  )
+		  {
+			Member.ShowValue();
+		  } /*for*/
+      } /*ShowInfoRest*/
 	
-	/**
-	 * Display refresh rate
-	 */
-	private void showRefreshRate(Display display) {
-		((TextView) findViewById(R.id.refresh_rate)).setText(Float.toString(display.getRefreshRate()));
-	}
+ 	
+	//////////////////////////////////////////////////////////////////////////
+	// Dialog
+	//////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Helper returns a string containing version number from the package manifest.
@@ -593,6 +378,10 @@ public class ScreenInfo extends Activity {
 		return mAbout;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Menu
+	//////////////////////////////////////////////////////////////////////////
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add( 0, MENU_ABOUT, 0, R.string.about_menu );

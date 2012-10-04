@@ -352,6 +352,7 @@ public class Screen {
             new CodeName(PixelFormat.RGBA_5551, R.string.rgba_5551),
             new CodeName(PixelFormat.RGBA_8888, R.string.rgba_8888),
             new CodeName(PixelFormat.RGBX_8888, R.string.rgbx_8888),
+            new CodeName(5, R.string.bgra_8888), /* see platform/system/core/include/system/graphics.h */
             new CodeName(PixelFormat.TRANSLUCENT, R.string.translucent),
             new CodeName(PixelFormat.TRANSPARENT, R.string.transparent),
             new CodeName(PixelFormat.UNKNOWN, R.string.unknown),

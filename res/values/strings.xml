@@ -63,6 +63,7 @@
 	<string name="rgba_5551">RGBA_5551</string>
 	<string name="rgba_8888">RGBA_8888</string>
 	<string name="rgbx_8888">RGBX_8888</string>
+	<string name="bgra_8888">BGRA_8888</string>
 	<string name="translucent">TRANSLUCENT</string>
 	<string name="transparent">TRANSPARENT</string>
 	<string name="nv21">NV21</string>

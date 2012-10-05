@@ -29,7 +29,7 @@ public abstract class InfoActivity extends android.app.Activity
 
     public abstract class InfoMember
       /* obtaining and displaying a value from a member of an info structure.
-        Needs Activity context so it can call findViewById. */
+        Needs Activity context so it can call findViewById and getString. */
       {
         final Object InObject;
         /*final*/ java.lang.reflect.Method ToString;

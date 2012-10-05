@@ -3,8 +3,7 @@ package com.jotabout.screeninfo;
 /**
  * ScreenInfo
  * 
- * A simple app to display the screen configuration parameters for an
- * Android device.
+ * Display the screen configuration parameters for an Android device.
  * 
  * Copyright (c) 2011 Michael J. Portuesi (http://www.jotabout.com)
  * 
@@ -34,6 +33,7 @@ import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Surface;
@@ -49,8 +49,6 @@ import android.view.WindowManager;
  * for display.
  * 
  * TODO:
- * 		-- screen size classification (large, xlarge, etc)
- * 		-- screen density classification (mdpi, hdpi, xhdpi, etc)
  * 		-- toString() for use in preparing a text summary
  * 
  */
@@ -60,6 +58,8 @@ public class Screen {
 	private final Display mDisplay;
 	private final DisplayMetrics mMetrics;
 	private final Configuration mConfig;
+ 	
+	public final int mSizeClass;
 	
 	public final int widthPx;
 	public final int heightPx;
@@ -78,7 +78,6 @@ public class Screen {
 	public final double screenPhysicalWidth, screenPhysicalHeight;
 	public final double xyDiagonalSizeInches, xyDiagonalSizeMillimeters;
 	public final double screenDiagonalSizeInches, screenDiagonalSizeMillimeters;
-	public final double diagonalSizeInches, diagonalSizeMillimeters;
 	public final double xyWidthSizeInches, xyHeightSizeInches;
 	public final double xyWidthSizeMillimeters, xyHeightSizeMillimeters;
 	public final double screenWidthSizeInches, screenHeightSizeInches;
@@ -145,6 +144,10 @@ public class Screen {
 		mDisplay.getMetrics(mMetrics);
         mConfig = ctx.getResources().getConfiguration();
 
+        // Screen Size classification
+		mSizeClass = mConfig.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+		
+		// Screen dimensions
 		  {
 			final Point pt = new Point();
 			try {
@@ -203,8 +206,6 @@ public class Screen {
 		screenDiagonalSizeMillimeters = Math.floor( screenRawDiagonalSizeInches * 25.4 + 0.5 );
 		// Calculate diagonal screen size, in both U.S. and Metric units
 		final double rawDiagonalSizeInches = Math.sqrt(Math.pow(xyPhysicalWidth, 2) + Math.pow(xyPhysicalHeight, 2));
-		diagonalSizeInches = Math.floor( rawDiagonalSizeInches * 10.0 + 0.5 ) / 10.0;
-		diagonalSizeMillimeters = Math.floor( rawDiagonalSizeInches * 25.4 + 0.5 );
 		
 		// Long/wide
         screenLayout = mConfig.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK;
@@ -243,7 +244,24 @@ public class Screen {
 		// Refresh rate
         refreshRate = mDisplay.getRefreshRate();
 	}
-
+ 	
+ 	/**
+	 * Model name of device.
+	 * @return
+	 */
+	public String deviceModel() {
+		return Build.MODEL;
+	}
+	
+	/**
+	 * Version of Android (e.g. "2.3.5").
+	 * 
+	 * @return
+	 */
+	public String androidVersion() {
+		return Build.VERSION.RELEASE;
+	}
+	
 	private static final CodeName[] SizeCodes = new CodeName[]
 		{
 			new CodeName(Configuration.SCREENLAYOUT_SIZE_SMALL, R.string.small),
@@ -368,5 +386,67 @@ public class Screen {
 		return
 			GetCodeName(pixelFormat, PixelFormatCodes);
 	}
+
+	/**
+	 * Return a string containing a text-based summary, suitable
+	 * to share, email, save to SD card, etc.
+	 * 
+	 * @param ctx
+	 * @return
+	 */
+	public String summaryText( Context ctx ) {
+		StringBuilder sb = new StringBuilder();
+		
+		addLine( sb, ctx, R.string.device_label, 						deviceModel() );
+		addLine( sb, ctx, R.string.os_version_label, 					androidVersion() );
+		addLine( sb, ctx, R.string.screen_class_label, 					GetSizeName() );
+		addLine( sb, ctx, R.string.density_class_label, 				GetDensityName() );
+		addLine( sb, ctx, R.string.width_pixels_label, 					widthPx );
+		addLine( sb, ctx, R.string.height_pixels_label, 				heightPx );
+		addLine( sb, ctx, R.string.width_dp_label, 						widthDp );
+		addLine( sb, ctx, R.string.height_dp_label, 					heightDp );
+		addLine( sb, ctx, R.string.smallest_dp_label, 					smallestDp );
+		addLine( sb, ctx, R.string.long_wide_label, 					screenLayoutText() );
+		addLine( sb, ctx, R.string.natural_orientation_label, 			defaultOrientationText() );
+		addLine( sb, ctx, R.string.current_orientation_label, 			currentOrientationText() );
+		addLine( sb, ctx, R.string.touchscreen_label, 					touchScreenText() );
+		addLine( sb, ctx, R.string.screen_dpi_label, 					densityDpi );
+		addLine( sb, ctx, R.string.actual_xdpi_label, 					xdpi );
+		addLine( sb, ctx, R.string.actual_ydpi_label, 					ydpi );
+		addLine( sb, ctx, R.string.logical_density_label, 				density );
+		addLine( sb, ctx, R.string.font_scale_density_label, 			scaledDensity );
+		addLine(sb, ctx, R.string.xy_diagonal_size_inches_label, xyDiagonalSizeInches);
+		addLine(sb, ctx, R.string.xy_diagonal_size_mm_label, xyDiagonalSizeMillimeters);
+		addLine(sb, ctx, R.string.xy_width_size_inches_label, xyWidthSizeInches);
+		addLine(sb, ctx, R.string.xy_height_size_inches_label, xyHeightSizeInches);
+		addLine(sb, ctx, R.string.xy_width_size_mm_label, xyWidthSizeMillimeters);
+		addLine(sb, ctx, R.string.xy_height_size_mm_label, xyHeightSizeMillimeters);
+		addLine(sb, ctx, R.string.screen_diagonal_size_inches_label, screenDiagonalSizeInches);
+		addLine(sb, ctx, R.string.screen_diagonal_size_mm_label, screenDiagonalSizeMillimeters);
+		addLine(sb, ctx, R.string.screen_width_size_inches_label, screenWidthSizeInches);
+		addLine(sb, ctx, R.string.screen_height_size_inches_label, screenHeightSizeInches);
+		addLine(sb, ctx, R.string.screen_width_size_mm_label, screenWidthSizeMillimeters);
+		addLine(sb, ctx, R.string.screen_height_size_mm_label, screenHeightSizeMillimeters);
+		addLine( sb, ctx, R.string.pixel_format_label, 					pixelFormatText() );
+		addLine( sb, ctx, R.string.refresh_rate_label, 					refreshRate );
+		
+		return sb.toString();
+	}
 	
+	private void addLine( StringBuilder sb, Context ctx, int resId, String value ) {
+		sb.append( ctx.getString( resId ) ).append( " " ).append( value ).append( "\n" );
+	}
+	
+	private void addLine( StringBuilder sb, Context ctx, int resId, int value ) {
+		addLine( sb, ctx, resId, Integer.toString(value) );
+	}
+	
+	private void addLine( StringBuilder sb, Context ctx, int resId, float value ) {
+		addLine( sb, ctx, resId, Float.toString(value) );
+	}
+	
+	private void addLine( StringBuilder sb, Context ctx, int resId, double value ) {
+		addLine( sb, ctx, resId, Double.toString(value) );
+	}
+
 }

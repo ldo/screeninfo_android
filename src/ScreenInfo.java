@@ -398,7 +398,7 @@ public class ScreenInfo extends Activity {
 	 * Share summary report via email or whatever
 	 */
 	private void share() {
-		String summaryString = mScreen.summaryText( this );
+		String summaryString = mScreen.summaryText();
 		final Intent shareIntent = new Intent( android.content.Intent.ACTION_SEND );
 		shareIntent.setType( "text/plain" );
 		shareIntent.putExtra( android.content.Intent.EXTRA_SUBJECT, 

@@ -391,59 +391,59 @@ public class Screen {
 	 * @param ctx
 	 * @return
 	 */
-	public String summaryText( Context ctx ) {
+	public String summaryText() {
 		StringBuilder sb = new StringBuilder();
 		
-		addLine( sb, ctx, R.string.device_label, 						deviceModel() );
-		addLine( sb, ctx, R.string.os_version_label, 					androidVersion() );
-		addLine( sb, ctx, R.string.screen_class_label, 					GetSizeName() );
-		addLine( sb, ctx, R.string.density_class_label, 				GetDensityName() );
-		addLine( sb, ctx, R.string.width_pixels_label, 					widthPx );
-		addLine( sb, ctx, R.string.height_pixels_label, 				heightPx );
-		addLine( sb, ctx, R.string.width_dp_label, 						widthDp );
-		addLine( sb, ctx, R.string.height_dp_label, 					heightDp );
-		addLine( sb, ctx, R.string.smallest_dp_label, 					smallestDp );
-		addLine( sb, ctx, R.string.long_wide_label, 					screenLayoutText() );
-		addLine( sb, ctx, R.string.natural_orientation_label, 			defaultOrientationText() );
-		addLine( sb, ctx, R.string.current_orientation_label, 			currentOrientationText() );
-		addLine( sb, ctx, R.string.touchscreen_label, 					touchScreenText() );
-		addLine( sb, ctx, R.string.screen_dpi_label, 					densityDpi );
-		addLine( sb, ctx, R.string.actual_xdpi_label, 					xdpi );
-		addLine( sb, ctx, R.string.actual_ydpi_label, 					ydpi );
-		addLine( sb, ctx, R.string.logical_density_label, 				density );
-		addLine( sb, ctx, R.string.font_scale_density_label, 			scaledDensity );
-		addLine(sb, ctx, R.string.xy_diagonal_size_inches_label, xyDiagonalSizeInches);
-		addLine(sb, ctx, R.string.xy_diagonal_size_mm_label, xyDiagonalSizeMillimeters);
-		addLine(sb, ctx, R.string.xy_width_size_inches_label, xyWidthSizeInches);
-		addLine(sb, ctx, R.string.xy_height_size_inches_label, xyHeightSizeInches);
-		addLine(sb, ctx, R.string.xy_width_size_mm_label, xyWidthSizeMillimeters);
-		addLine(sb, ctx, R.string.xy_height_size_mm_label, xyHeightSizeMillimeters);
-		addLine(sb, ctx, R.string.screen_diagonal_size_inches_label, screenDiagonalSizeInches);
-		addLine(sb, ctx, R.string.screen_diagonal_size_mm_label, screenDiagonalSizeMillimeters);
-		addLine(sb, ctx, R.string.screen_width_size_inches_label, screenWidthSizeInches);
-		addLine(sb, ctx, R.string.screen_height_size_inches_label, screenHeightSizeInches);
-		addLine(sb, ctx, R.string.screen_width_size_mm_label, screenWidthSizeMillimeters);
-		addLine(sb, ctx, R.string.screen_height_size_mm_label, screenHeightSizeMillimeters);
-		addLine( sb, ctx, R.string.pixel_format_label, 					pixelFormatText() );
-		addLine( sb, ctx, R.string.refresh_rate_label, 					refreshRate );
+		addLine( sb, R.string.device_label, 						deviceModel() );
+		addLine( sb, R.string.os_version_label, 					androidVersion() );
+		addLine( sb, R.string.screen_class_label, 					GetSizeName() );
+		addLine( sb, R.string.density_class_label, 				GetDensityName() );
+		addLine( sb, R.string.width_pixels_label, 					widthPx );
+		addLine( sb, R.string.height_pixels_label, 				heightPx );
+		addLine( sb, R.string.width_dp_label, 						widthDp );
+		addLine( sb, R.string.height_dp_label, 					heightDp );
+		addLine( sb, R.string.smallest_dp_label, 					smallestDp );
+		addLine( sb, R.string.long_wide_label, 					screenLayoutText() );
+		addLine( sb, R.string.natural_orientation_label, 			defaultOrientationText() );
+		addLine( sb, R.string.current_orientation_label, 			currentOrientationText() );
+		addLine( sb, R.string.touchscreen_label, 					touchScreenText() );
+		addLine( sb, R.string.screen_dpi_label, 					densityDpi );
+		addLine( sb, R.string.actual_xdpi_label, 					xdpi );
+		addLine( sb, R.string.actual_ydpi_label, 					ydpi );
+		addLine( sb, R.string.logical_density_label, 				density );
+		addLine( sb, R.string.font_scale_density_label, 			scaledDensity );
+		addLine(sb, R.string.xy_diagonal_size_inches_label, xyDiagonalSizeInches);
+		addLine(sb, R.string.xy_diagonal_size_mm_label, xyDiagonalSizeMillimeters);
+		addLine(sb, R.string.xy_width_size_inches_label, xyWidthSizeInches);
+		addLine(sb, R.string.xy_height_size_inches_label, xyHeightSizeInches);
+		addLine(sb, R.string.xy_width_size_mm_label, xyWidthSizeMillimeters);
+		addLine(sb, R.string.xy_height_size_mm_label, xyHeightSizeMillimeters);
+		addLine(sb, R.string.screen_diagonal_size_inches_label, screenDiagonalSizeInches);
+		addLine(sb, R.string.screen_diagonal_size_mm_label, screenDiagonalSizeMillimeters);
+		addLine(sb, R.string.screen_width_size_inches_label, screenWidthSizeInches);
+		addLine(sb, R.string.screen_height_size_inches_label, screenHeightSizeInches);
+		addLine(sb, R.string.screen_width_size_mm_label, screenWidthSizeMillimeters);
+		addLine(sb, R.string.screen_height_size_mm_label, screenHeightSizeMillimeters);
+		addLine( sb, R.string.pixel_format_label, 					pixelFormatText() );
+		addLine( sb, R.string.refresh_rate_label, 					refreshRate );
 		
 		return sb.toString();
 	}
 	
-	private void addLine( StringBuilder sb, Context ctx, int resId, String value ) {
+	private void addLine( StringBuilder sb, int resId, String value ) {
 		sb.append( ctx.getString( resId ) ).append( " " ).append( value ).append( "\n" );
 	}
 	
-	private void addLine( StringBuilder sb, Context ctx, int resId, int value ) {
-		addLine( sb, ctx, resId, Integer.toString(value) );
+	private void addLine( StringBuilder sb, int resId, int value ) {
+		addLine( sb, resId, Integer.toString(value) );
 	}
 	
-	private void addLine( StringBuilder sb, Context ctx, int resId, float value ) {
-		addLine( sb, ctx, resId, Float.toString(value) );
+	private void addLine( StringBuilder sb, int resId, float value ) {
+		addLine( sb, resId, Float.toString(value) );
 	}
 	
-	private void addLine( StringBuilder sb, Context ctx, int resId, double value ) {
-		addLine( sb, ctx, resId, Double.toString(value) );
+	private void addLine( StringBuilder sb, int resId, double value ) {
+		addLine( sb, resId, Double.toString(value) );
 	}
 
 }

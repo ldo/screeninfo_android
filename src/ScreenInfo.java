@@ -26,7 +26,6 @@ package com.jotabout.screeninfo;
  * THE SOFTWARE.
  */
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -42,7 +41,7 @@ import android.widget.TextView;
 /**
  * Main activity class.  Displays information to user.
  */
-public class ScreenInfo extends Activity {
+public class ScreenInfo extends InfoActivity {
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Constants
@@ -84,167 +83,6 @@ public class ScreenInfo extends Activity {
 	//////////////////////////////////////////////////////////////////////////
 	// Info Display
 	//////////////////////////////////////////////////////////////////////////
-
-	abstract class InfoMember
-	  /* obtaining and displaying a value from a member of an info structure. */
-	  {
-		final Object InObject;
-		/*final*/ java.lang.reflect.Method ToString;
-		final int TextID;
-
-		public InfoMember
-		  (
-			Object InObject, /* the info structure */
-			int TextID /* ID of TextView to be set to value */
-		  )
-		  {
-			this.InObject = InObject;
-			this.TextID = TextID;
-		  } /*InfoMember*/
-
-		protected void Init
-		  (
-			Class<?> MemberType
-		  )
-		  /* remainder of common initialization that can't be done in constructor. */
-		  {
-			if (MemberType.isPrimitive())
-			  {
-				try
-				  {
-					final String TypeName = MemberType.getName().intern();
-					if (TypeName == "int")
-					  {
-						MemberType = Class.forName("java.lang.Integer");
-					  }
-					else if (TypeName == "float")
-					  {
-						MemberType = Class.forName("java.lang.Float");
-					  }
-					else if (TypeName == "double")
-					  {
-						MemberType = Class.forName("java.lang.Double");
-					  } /*if*/
-				  /* add other replacements of primitive types here as necessary */
-				  }
-				catch (ClassNotFoundException err)
-				  {
-					throw new RuntimeException(err.toString());
-				  } /*try*/
-			  } /*if*/
-			try
-			  {
-				this.ToString = MemberType.getDeclaredMethod("toString");
-			  }
-			catch (NoSuchMethodException err)
-			  {
-				throw new RuntimeException(err.toString());
-			  } /*try*/
-		  } /*Init*/
-
-		abstract public Object GetValue();
-		  /* must return the value to be displayed. */
-
-		public void ShowValue()
-		  /* sets the field to show the member return value. */
-		  {
-			try
-			  {
-				((TextView)findViewById(TextID)).setText((String)ToString.invoke(GetValue()));
-			  }
-			catch (IllegalAccessException err)
-			  {
-				throw new RuntimeException(err.toString());
-			  }
-			catch (java.lang.reflect.InvocationTargetException err)
-			  {
-				throw new RuntimeException(err.toString());
-			  } /*try*/
-		  } /*ShowValue*/
-
-	  } /*InfoMember*/;
-
-	class InfoField extends InfoMember
-	  /* obtaining and displaying a field value from an info structure. */
-	  {
-		final java.lang.reflect.Field ObjField;
-
-		public InfoField
-		  (
-			Object InObject, /* the info structure */
-			String FieldName, /* value of this field will be shown */
-			int TextID /* ID of TextView to be set to value */
-		  )
-		  {
-			super(InObject, TextID);
-			try
-			  {
-				this.ObjField = InObject.getClass().getDeclaredField(FieldName);
-			  }
-			catch (NoSuchFieldException err)
-			  {
-				throw new RuntimeException(err.toString());
-			  } /*try*/
-			Init(this.ObjField.getType());
-		  } /*InfoField*/
-
-		public Object GetValue()
-		  {
-			try
-			  {
-				return
-					ObjField.get(InObject);
-			  }
-			catch (IllegalAccessException err)
-			  {
-				throw new RuntimeException(err.toString());
-			  } /*try*/
-		  } /*GetValue*/
-
-	  } /*InfoField*/;
-
-	class InfoMethod extends InfoMember
-	  /* obtaining and displaying a method return value from an info structure. */
-	  {
-		final java.lang.reflect.Method ObjMethod;
-
-		public InfoMethod
-		  (
-			Object InObject, /* the info structure */
-			String MethodName, /* must take no arguments */
-			int TextID /* ID of TextView to be set to value */
-		  )
-		  {
-			super(InObject, TextID);
-			try
-			  {
-				this.ObjMethod = InObject.getClass().getDeclaredMethod(MethodName);
-			  }
-			catch (NoSuchMethodException err)
-			  {
-				throw new RuntimeException(err.toString());
-			  } /*try*/
-			Init(this.ObjMethod.getReturnType());
-		  } /*InfoMethod*/
-
-		public Object GetValue()
-		  {
-			try
-			  {
-				return
-					ObjMethod.invoke(InObject);
-			  }
-			catch (IllegalAccessException err)
-			  {
-				throw new RuntimeException(err.toString());
-			  }
-			catch (java.lang.reflect.InvocationTargetException err)
-			  {
-				throw new RuntimeException(err.toString());
-			  } /*try*/
-		  } /*GetValue*/
-
-	  } /*InfoMethod*/;
 
 	/**
      * Show basic information about the device.

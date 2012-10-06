@@ -8,7 +8,7 @@
 #-
 
 dest_root="${1}"
-# note nesting of loops must follow precedence ordering as defined at
+# note ordering of name components must follow precedence ordering as defined at
 # <http://developer.android.com/guide/topics/resources/providing-resources.html#AlternativeResources>
 for screen_size in small normal large xlarge; do
     for screen_aspect in long notlong; do

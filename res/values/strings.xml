@@ -12,7 +12,8 @@
     <string name="email">Email: info@jotabout.com</string>
     <string name="blog">Blog: digitaldumptruck.jotabout.com</string>
     <string name="about_dismiss">That\'s nice</string>
-        
+
+	<string name="selector">(default)</string>
 	<string name="device_label">Device Name:</string>
 	<string name="os_version_label">Android Version:</string>
     <string name="screen_class_label">Screen class:</string>

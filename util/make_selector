@@ -10,19 +10,32 @@
 dest_root="${1}"
 # note ordering of name components must follow precedence ordering as defined at
 # <http://developer.android.com/guide/topics/resources/providing-resources.html#AlternativeResources>
-for screen_size in small normal large xlarge; do
-    for screen_aspect in long notlong; do
-        for screen_orientation in port land; do
-            for screen_pixel_density in ldpi mdpi hdpi xhdpi tvdpi; do
+for screen_size in "" small normal large xlarge; do
+    for screen_aspect in "" long notlong; do
+        for screen_orientation in "" port land; do
+            for screen_pixel_density in "" ldpi mdpi hdpi xhdpi tvdpi; do
                 selector="${screen_size}-${screen_aspect}-${screen_orientation}-${screen_pixel_density}"
-                dest_dir="${dest_root}/values-${selector}"
-                mkdir -p "${dest_dir}"
-                (
-                    echo '<?xml version="1.0" encoding="utf-8"?>'
-                    echo '<resources>'
-                    echo "    <string name=\"selector\">${selector}</string>"
-                    echo '</resources>'
-                ) >"${dest_dir}/strings.xml"
+                for ((;;)); do
+                    selector2="${selector/--/-}"
+                    if [ "$selector2" = "$selector" ] ; then break; fi
+                    selector="${selector2}"
+                done
+                for ((;;)); do
+                    selector2="${selector#-}"
+                    selector2="${selector2%-}"
+                    if [ "$selector2" = "$selector" ] ; then break; fi
+                    selector="${selector2}"
+                done
+                if [ "$selector" != "" ]; then
+                    dest_dir="${dest_root}/values-${selector}"
+                    mkdir -p "${dest_dir}"
+                    (
+                        echo '<?xml version="1.0" encoding="utf-8"?>'
+                        echo '<resources>'
+                        echo "    <string name=\"selector\">${selector}</string>"
+                        echo '</resources>'
+                    ) >"${dest_dir}/strings.xml"
+                fi
             done
         done
     done

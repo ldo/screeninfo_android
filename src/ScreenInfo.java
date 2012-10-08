@@ -28,15 +28,8 @@ package com.jotabout.screeninfo;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
-import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 /**
  * Main activity class.  Displays information to user.
@@ -63,7 +56,7 @@ public class ScreenInfo extends InfoActivity {
 	//////////////////////////////////////////////////////////////////////////
 	
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(android.os.Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
@@ -192,11 +185,11 @@ public class ScreenInfo extends InfoActivity {
 	 */
 	private String appVersion() {
 		String version = "";
-		PackageInfo info;
+		android.content.pm.PackageInfo info;
 		try {
 			info = getPackageManager().getPackageInfo(getPackageName(), 0);
 			version = this.getString(R.string.version) + " " + info.versionName;
-		} catch (NameNotFoundException ignore) {;}
+		} catch (android.content.pm.PackageManager.NameNotFoundException ignore) {;}
 
 		return version;
 	}
@@ -211,17 +204,19 @@ public class ScreenInfo extends InfoActivity {
 	        mAbout = new Dialog(this);
 	        mAbout.setContentView(R.layout.about_dialog);
 	        mAbout.setTitle(R.string.about_title);
-	        ((TextView) mAbout.findViewById(R.id.about_version)).setText(appVersion());
-	        ((Button)mAbout.findViewById(R.id.about_dismiss)).setOnClickListener
-			  (
-				new View.OnClickListener()
-				  {
-					public void onClick(View v)
+	        ((android.widget.TextView)mAbout.findViewById(R.id.about_version))
+				.setText(appVersion());
+	        ((android.widget.Button)mAbout.findViewById(R.id.about_dismiss))
+				.setOnClickListener
+				  (
+					new View.OnClickListener()
 					  {
-						mAbout.dismiss();
-					  } /*onClick*/
-				  } /*View.OnClickListener*/
-			  );
+						public void onClick(View v)
+						  {
+							mAbout.dismiss();
+						  } /*onClick*/
+					  } /*View.OnClickListener*/
+				  );
 		break;
 		  } /*switch*/
 
@@ -239,7 +234,7 @@ public class ScreenInfo extends InfoActivity {
 		String summaryString = mScreen.summaryText();
 		final Intent shareIntent = new Intent( android.content.Intent.ACTION_SEND );
 		shareIntent.setType( "text/plain" );
-		shareIntent.putExtra( android.content.Intent.EXTRA_SUBJECT, 
+		shareIntent.putExtra( Intent.EXTRA_SUBJECT, 
 				appendVersionToSubject( R.string.share_summary_subject ) );
 		shareIntent.putExtra( android.content.Intent.EXTRA_TEXT, summaryString );
 
@@ -275,7 +270,7 @@ public class ScreenInfo extends InfoActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(android.view.MenuItem item) {
 		switch( item.getItemId() ) {
 		case MENU_ABOUT:
 			showDialog(ABOUT_DIALOG);

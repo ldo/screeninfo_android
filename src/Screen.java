@@ -28,16 +28,13 @@ package com.jotabout.screeninfo;
 
 import java.lang.reflect.Method;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Build;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Surface;
-import android.view.WindowManager;
 
 /**
  * Screen is a model object that summarizes information about the
@@ -52,7 +49,6 @@ import android.view.WindowManager;
 public class Screen {
 
 	private final InfoActivity ctx;
-	private final Display mDisplay;
 	private final DisplayMetrics mMetrics;
 	private final Configuration mConfig;
  	
@@ -135,8 +131,9 @@ public class Screen {
 
 	public Screen( InfoActivity ctx ) {
 		this.ctx = ctx;
-		final WindowManager wm = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE));
-		mDisplay = wm.getDefaultDisplay();
+		final android.view.Display mDisplay =
+			((android.view.WindowManager)ctx.getSystemService(android.content.Context.WINDOW_SERVICE))
+				.getDefaultDisplay();
  		mMetrics = new DisplayMetrics();
 		mDisplay.getMetrics(mMetrics);
         mConfig = ctx.getResources().getConfiguration();

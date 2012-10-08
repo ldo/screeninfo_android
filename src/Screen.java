@@ -162,19 +162,18 @@ public class Screen {
 		heightDp = (int) (((double) heightPx / mMetrics.density) + 0.5);
 		smallestDp = widthDp > heightDp ? heightDp : widthDp;
 
-		// DPI
+		// nominal DPI
 		densityDpi = mMetrics.densityDpi;
-		
-		// Screen density scaling factors
+		// nominal screen density scaling factors
 		density = mMetrics.density;
-		scaledDensity = mMetrics.scaledDensity;
-		
+		scaledDensity = mMetrics.scaledDensity; /* for fonts, may differ from density under user control */
+	  /* actual x & y pixel density (may not be exactly the same in both axes): */
 		// Normalize the xdpi/ydpi for the next set of calculations
 		// Guard against divide-by-zero, possible with lazy device manufacturers
 		// who set these fields incorrectly. Set the density to our best guess.
 		xdpi = mMetrics.xdpi < 1.0f ? mMetrics.densityDpi : mMetrics.xdpi;
 		ydpi = mMetrics.ydpi < 1.0f ? mMetrics.densityDpi : mMetrics.ydpi;
-		
+
 		// Calculate physical screen width/height
 		xyPhysicalWidth = (float)mMetrics.widthPixels / xdpi;
 		xyPhysicalHeight = (float)mMetrics.heightPixels / ydpi;
@@ -198,12 +197,9 @@ public class Screen {
 		final double screenRawDiagonalSizeInches = Math.sqrt(Math.pow(screenPhysicalWidth, 2) + Math.pow(screenPhysicalHeight, 2));
 		screenDiagonalSizeInches = Math.floor( screenRawDiagonalSizeInches * 10.0 + 0.5 ) / 10.0;
 		screenDiagonalSizeMillimeters = Math.floor( screenRawDiagonalSizeInches * 25.4 + 0.5 );
-		// Calculate diagonal screen size, in both U.S. and Metric units
-		final double rawDiagonalSizeInches = Math.sqrt(Math.pow(xyPhysicalWidth, 2) + Math.pow(xyPhysicalHeight, 2));
 		
 		// Long/wide
         screenLayout = mConfig.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK;
-        
         // Orientation
         defaultOrientation = mConfig.orientation;
 		// Do the best job we can to find out which way the screen is currently rotated.

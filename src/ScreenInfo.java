@@ -232,11 +232,11 @@ public class ScreenInfo extends InfoActivity {
 	 */
 	private void share() {
 		String summaryString = mScreen.summaryText();
-		final Intent shareIntent = new Intent( android.content.Intent.ACTION_SEND );
+		final Intent shareIntent = new Intent( Intent.ACTION_SEND );
 		shareIntent.setType( "text/plain" );
 		shareIntent.putExtra( Intent.EXTRA_SUBJECT, 
 				appendVersionToSubject( R.string.share_summary_subject ) );
-		shareIntent.putExtra( android.content.Intent.EXTRA_TEXT, summaryString );
+		shareIntent.putExtra( Intent.EXTRA_TEXT, summaryString );
 
 		startActivity( Intent.createChooser( shareIntent, getString( R.string.share_title ) ) );
 	}

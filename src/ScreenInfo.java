@@ -41,8 +41,6 @@ public class ScreenInfo extends InfoActivity {
 	//////////////////////////////////////////////////////////////////////////
 	
 	private final static int ABOUT_DIALOG = 1;
-	private final static int MENU_ABOUT = Menu.FIRST;
-	private final static int MENU_SHARE = Menu.FIRST + 1;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// State
@@ -54,7 +52,9 @@ public class ScreenInfo extends InfoActivity {
 	//////////////////////////////////////////////////////////////////////////
 	// Activity Lifecycle
 	//////////////////////////////////////////////////////////////////////////
-	
+
+    java.util.Map<android.view.MenuItem, Runnable> OptionsMenu;
+
     @Override
     public void onCreate(android.os.Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -259,27 +259,55 @@ public class ScreenInfo extends InfoActivity {
 	//////////////////////////////////////////////////////////////////////////
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add( 0, MENU_ABOUT, 0, R.string.about_menu )
-			.setIcon( android.R.drawable.ic_menu_info_details );
-		menu.add( 0, MENU_SHARE, 0, R.string.share_menu )
-			.setIcon( android.R.drawable.ic_menu_share );
-		return true;
-	}
 
-	@Override
-	public boolean onOptionsItemSelected(android.view.MenuItem item) {
-		switch( item.getItemId() ) {
-		case MENU_ABOUT:
-			showDialog(ABOUT_DIALOG);
-			return true;
-		case MENU_SHARE:
-			share();
-			return true;
-		}
-		
-		return false;
-	}
-}
+    @Override
+    public boolean onCreateOptionsMenu
+      (
+        android.view.Menu TheMenu
+      )
+      {
+        OptionsMenu = new java.util.HashMap<android.view.MenuItem, Runnable>();
+        OptionsMenu.put
+          (
+            TheMenu.add(R.string.about_menu).setIcon(android.R.drawable.ic_menu_info_details),
+            new Runnable()
+              {
+                public void run()
+                  {
+					showDialog(ABOUT_DIALOG);
+                  } /*run*/
+              } /*Runnable*/
+          );
+        OptionsMenu.put
+          (
+            TheMenu.add(R.string.share_menu).setIcon(android.R.drawable.ic_menu_share),
+            new Runnable()
+              {
+                public void run()
+                  {
+					share();
+                  } /*run*/
+              } /*Runnable*/
+          );
+        return
+            true;
+	  } /*onCreateOptionsMenu*/
+
+    @Override
+    public boolean onOptionsItemSelected
+      (
+        android.view.MenuItem TheItem
+      )
+      {
+        boolean Handled = false;
+        final Runnable Action = OptionsMenu.get(TheItem);
+        if (Action != null)
+          {
+            Action.run();
+            Handled = true;
+          } /*if*/
+        return
+            Handled;
+      } /*onOptionsItemSelected*/
+
+} /*ScreenInfo*/;

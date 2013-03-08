@@ -46,6 +46,7 @@ import android.view.Surface;
  * for display.
  * 
  */
+@SuppressWarnings("deprecation")	// Tell Lint to STFU about deprecated APIs - they are necessary for backwards compatibility
 public class Screen {
 
 	private final InfoActivity ctx;

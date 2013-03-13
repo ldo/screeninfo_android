@@ -91,7 +91,7 @@
 	<string name="xlarge">xlarge</string>
 	<string name="undefined">undefined</string>
 	<string name="unknown">Unknown</string>
-    <string name="unsupported">Unsupported</string>
+    <string name="unsupported">Not Available</string>
 	<string name="ldpi">ldpi</string>
 	<string name="mdpi">ldpi</string>
 	<string name="tvdpi">tvdpi</string>

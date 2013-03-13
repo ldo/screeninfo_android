@@ -49,7 +49,7 @@ import android.view.Surface;
  */
 @SuppressWarnings("deprecation")	// Tell Lint to STFU about deprecated APIs - they are necessary for backwards compatibility
 public class Screen {
-	public static final int UNSUPPORTED = -255;
+	public static final int UNSUPPORTED = -255; /* will never be returned as a valid value */
 
 	private final InfoActivity ctx;
 	private final DisplayMetrics mMetrics;
@@ -174,8 +174,8 @@ public class Screen {
 			  }
 			catch (Exception ignore)
 			  {
-				pt.x = widthPx;
-				pt.y = heightPx;
+				pt.x = UNSUPPORTED;
+				pt.y = UNSUPPORTED;
 			  } /*try*/
 			realWidthPx = pt.x;
 			realHeightPx = pt.y;
@@ -198,7 +198,6 @@ public class Screen {
 				pt.y = (int) (((double) heightPx / mMetrics.density) + 0.5);
 				smallest = pt.x > pt.y ? pt.y : pt.x;
 			  } /*try*/
-		// Screen sizes in device-independent pixels (dp)
 			widthDp = pt.x;
 			heightDp = pt.y;
 			smallestDp = smallest;
@@ -332,6 +331,24 @@ public class Screen {
 			GetCodeName(mMetrics.densityDpi, DensityCodes);
 	  } /*GetDensityName*/
 
+	public String GetRealWidthPx()
+	  {
+		return
+			realWidthPx != UNSUPPORTED ?
+				Integer.toString(realWidthPx)
+			:
+				ctx.getString(R.string.unsupported);
+	  } /*GetRealWidthPx*/
+
+	public String GetRealHeightPx()
+	  {
+		return
+			realHeightPx != UNSUPPORTED ?
+				Integer.toString(realHeightPx)
+			:
+				ctx.getString(R.string.unsupported);
+	  } /*GetRealHeightPx*/
+
 	private static final CodeName[] LongWideCodes = new CodeName[]
 		{
 			new CodeName(Configuration.SCREENLAYOUT_LONG_YES, R.string.yes),
@@ -431,7 +448,6 @@ public class Screen {
 	 * Return a string containing a text-based summary, suitable
 	 * to share, email, save to SD card, etc.
 	 * 
-	 * @param ctx
 	 * @return
 	 */
 	public String summaryText() {
@@ -445,8 +461,8 @@ public class Screen {
 						ctx.new InfoMethod(this, "androidVersion", R.string.os_version_label),
 						ctx.new InfoMethod(this, "GetSizeName", R.string.screen_class_label),
 						ctx.new InfoMethod(this, "GetDensityName", R.string.density_class_label),
-						ctx.new InfoField(this, "realWidthPx", R.string.total_width_pixels_label),
-						ctx.new InfoField(this, "realHeightPx", R.string.total_height_pixels_label),
+						ctx.new InfoMethod(this, "GetRealWidthPx", R.string.total_width_pixels_label),
+						ctx.new InfoMethod(this, "GetRealHeightPx", R.string.total_height_pixels_label),
 						ctx.new InfoField(this, "widthPx", R.string.width_pixels_label),
 						ctx.new InfoField(this, "heightPx", R.string.height_pixels_label),
 						ctx.new InfoField(this, "widthDp", R.string.width_dp_label),

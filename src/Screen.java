@@ -480,7 +480,9 @@ public class Screen {
 		  {
 			Member.AppendValue(sb);
 		  } /*for*/
-		
+		sb
+			.append("\n")
+			.append(ctx.getString(R.string.play_store_link)).append("\n");
 		return sb.toString();
 	}
 

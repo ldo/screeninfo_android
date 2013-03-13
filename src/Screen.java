@@ -26,6 +26,7 @@ package com.jotabout.screeninfo;
  * THE SOFTWARE.
  */
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import android.content.res.Configuration;
@@ -48,6 +49,7 @@ import android.view.Surface;
  */
 @SuppressWarnings("deprecation")	// Tell Lint to STFU about deprecated APIs - they are necessary for backwards compatibility
 public class Screen {
+	public static final int UNSUPPORTED = -255;
 
 	private final InfoActivity ctx;
 	private final DisplayMetrics mMetrics;
@@ -55,8 +57,11 @@ public class Screen {
  	
 	public final int mSizeClass;
 	
-	public final int widthPx;
-	public final int heightPx;
+	public final int widthPx, heightPx;
+	  /* Usable (application-accessible) dimensions of screen in pixels */
+	public final int realWidthPx, realHeightPx;
+	  /* Real dimensions of screen, in pixels (all usable space, including system-reserved space) */
+
 	public final int widthDp;
 	public final int heightDp;
 	public final int smallestDp;
@@ -142,9 +147,10 @@ public class Screen {
         // Screen Size classification
 		mSizeClass = mConfig.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
 		
-		// Screen dimensions
 		  {
 			final Point pt = new Point();
+
+			// Usable Screen dimensions
 			try {
 				// Try to get size without the Status bar, if we can (API level 13)
 				final Method getSizeMethod = mDisplay.getClass().getMethod("getSize", Point.class);
@@ -156,12 +162,47 @@ public class Screen {
 			}
 			widthPx = pt.x;
 			heightPx = pt.y;
+
+			try
+			  {
+				// Total (real) screen dimensions (as of Android 4.2, API 17)
+				final Method getRealMetricsMethod = mDisplay.getClass().getMethod("getRealMetrics", DisplayMetrics.class);
+				DisplayMetrics metrics = new DisplayMetrics();
+				getRealMetricsMethod.invoke(mDisplay, metrics);
+				pt.x = metrics.widthPixels;
+				pt.y = metrics.heightPixels;
+			  }
+			catch (Exception ignore)
+			  {
+				pt.x = widthPx;
+				pt.y = heightPx;
+			  } /*try*/
+			realWidthPx = pt.x;
+			realHeightPx = pt.y;
 		  }
-    	
-		// Calculate screen sizes in device-independent pixels (dp)
-		widthDp = (int) (((double) widthPx / mMetrics.density) + 0.5);
-		heightDp = (int) (((double) heightPx / mMetrics.density) + 0.5);
-		smallestDp = widthDp > heightDp ? heightDp : widthDp;
+
+		  {
+			final Point pt = new Point();
+			int smallest;
+			try
+			  {
+				// Screen sizes in device-independent pixels (dp) (as of API 13)
+				final Class<Configuration> ConfigClass = (Class<Configuration>)mConfig.getClass();
+				pt.x = ConfigClass.getField("screenWidthDp").getInt(mConfig);
+				pt.y = ConfigClass.getField("screenHeightDp").getInt(mConfig);
+				smallest = ConfigClass.getField("smallestScreenWidthDp").getInt(mConfig);
+			  }
+			catch (Exception ignore)
+			  {
+				pt.x = (int) (((double) widthPx / mMetrics.density) + 0.5);
+				pt.y = (int) (((double) heightPx / mMetrics.density) + 0.5);
+				smallest = pt.x > pt.y ? pt.y : pt.x;
+			  } /*try*/
+		// Screen sizes in device-independent pixels (dp)
+			widthDp = pt.x;
+			heightDp = pt.y;
+			smallestDp = smallest;
+		  }
 
 		// nominal DPI
 		densityDpi = mMetrics.densityDpi;
@@ -229,8 +270,15 @@ public class Screen {
         // Touchscreen type
         touchScreen = mConfig.touchscreen;
         
-        // Pixel format
-		pixelFormat = mDisplay.getPixelFormat();
+        // Pixel format (deprecated as of Android 4.2, API 17)
+        if ( Build.VERSION.SDK_INT < 17 )
+		  {
+        	pixelFormat = mDisplay.getPixelFormat();
+          }
+		else
+		  {
+	        pixelFormat = UNSUPPORTED;
+		  } /*if*/
 		
 		// Refresh rate
         refreshRate = mDisplay.getRefreshRate();
@@ -365,6 +413,7 @@ public class Screen {
             new CodeName(PixelFormat.TRANSLUCENT, R.string.translucent),
             new CodeName(PixelFormat.TRANSPARENT, R.string.transparent),
             new CodeName(PixelFormat.UNKNOWN, R.string.unknown),
+            new CodeName(UNSUPPORTED, R.string.unsupported),
             new CodeName(ImageFormat.NV21, R.string.nv21),
             new CodeName(ImageFormat.YUY2, R.string.yuy2),
             new CodeName(ImageFormat.NV16, R.string.nv16),
@@ -396,6 +445,8 @@ public class Screen {
 						ctx.new InfoMethod(this, "androidVersion", R.string.os_version_label),
 						ctx.new InfoMethod(this, "GetSizeName", R.string.screen_class_label),
 						ctx.new InfoMethod(this, "GetDensityName", R.string.density_class_label),
+						ctx.new InfoField(this, "realWidthPx", R.string.total_width_pixels_label),
+						ctx.new InfoField(this, "realHeightPx", R.string.total_height_pixels_label),
 						ctx.new InfoField(this, "widthPx", R.string.width_pixels_label),
 						ctx.new InfoField(this, "heightPx", R.string.height_pixels_label),
 						ctx.new InfoField(this, "widthDp", R.string.width_dp_label),

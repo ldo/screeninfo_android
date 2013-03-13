@@ -106,6 +106,8 @@ public class ScreenInfo extends InfoActivity {
 			InfoMember Member :
 				new InfoMember[]
 					{
+                        new InfoField(mScreen, "realWidthPx", R.id.total_width_pixels),
+                        new InfoField(mScreen, "realHeightPx", R.id.total_height_pixels),
                         new InfoField(mScreen, "widthPx", R.id.width_pixels),
                         new InfoField(mScreen, "heightPx", R.id.height_pixels),
                         new InfoField(mScreen, "widthDp", R.id.width_dp),

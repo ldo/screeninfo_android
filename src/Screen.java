@@ -149,14 +149,25 @@ public class Screen {
 			final Point pt = new Point();
 
 			// Usable Screen dimensions
-			try {
+			try
+			  {
 				// Try to get size without the Status bar, if we can (API level 13)
 				mDisplay.getClass().getMethod("getSize", Point.class).invoke(mDisplay, pt);
-			} catch (Exception ignore) {
+			  }
+			catch (NoSuchMethodException ignore)
+			  {
 				// Use older APIs
 				pt.x = mDisplay.getWidth();
 				pt.y = mDisplay.getHeight();
-			}
+              }
+            catch (IllegalAccessException err)
+              {
+                throw new RuntimeException(err.toString());
+              }
+            catch (java.lang.reflect.InvocationTargetException err)
+              {
+                throw new RuntimeException(err.toString());
+			  } /*try*/
 			widthPx = pt.x;
 			heightPx = pt.y;
 
@@ -169,10 +180,18 @@ public class Screen {
 				pt.x = metrics.widthPixels;
 				pt.y = metrics.heightPixels;
 			  }
-			catch (Exception ignore)
+			catch (NoSuchMethodException ignore)
 			  {
 				pt.x = UNSUPPORTED;
 				pt.y = UNSUPPORTED;
+              }
+            catch (IllegalAccessException err)
+              {
+                throw new RuntimeException(err.toString());
+              }
+            catch (java.lang.reflect.InvocationTargetException err)
+              {
+                throw new RuntimeException(err.toString());
 			  } /*try*/
 			realWidthPx = pt.x;
 			realHeightPx = pt.y;
@@ -189,7 +208,7 @@ public class Screen {
 				pt.y = ConfigClass.getField("screenHeightDp").getInt(mConfig);
 				smallest = ConfigClass.getField("smallestScreenWidthDp").getInt(mConfig);
 			  }
-			catch (Exception ignore)
+			catch (NoSuchFieldException ignore)
 			  {
 				pt.x = (int)(
 						(
@@ -210,6 +229,10 @@ public class Screen {
 						0.5
 					);
 				smallest = pt.x > pt.y ? pt.y : pt.x;
+              }
+            catch (IllegalAccessException err)
+              {
+                throw new RuntimeException(err.toString());
 			  } /*try*/
 			widthDp = pt.x;
 			heightDp = pt.y;
@@ -257,26 +280,29 @@ public class Screen {
         // Orientation
         defaultOrientation = mConfig.orientation;
 		// Do the best job we can to find out which way the screen is currently rotated.
-		int rotation = -1;
-		// First, try the Display#getRotation() call, which was introduced in Froyo.
-		// Reference: http://android-developers.blogspot.com/2010/09/one-screen-turn-deserves-another.html
-		try {
-			rotation = (Integer)mDisplay.getClass().getMethod("getRotation").invoke(mDisplay);
-		}
-		catch (SecurityException ignore) {}
-		catch (NoSuchMethodException ignore) {} 
-		catch (IllegalArgumentException ignore) {}
-		catch (IllegalAccessException ignore) {}
-		catch (java.lang.reflect.InvocationTargetException ignore) {}
-		if (rotation >= 0)
 		  {
+			int rotation;
+			try
+			  {
+				// First, try the Display#getRotation() call, which was introduced in Froyo.
+				// Reference: http://android-developers.blogspot.com/2010/09/one-screen-turn-deserves-another.html
+				rotation = (Integer)mDisplay.getClass().getMethod("getRotation").invoke(mDisplay);
+			  }
+			catch (NoSuchMethodException ignore)
+			  {
+				// Fall back on the deprecated Display#getOrientation method from earlier releases of Android.
+				rotation = mDisplay.getOrientation();
+              }
+            catch (IllegalAccessException err)
+              {
+                throw new RuntimeException(err.toString());
+              }
+            catch (java.lang.reflect.InvocationTargetException err)
+              {
+                throw new RuntimeException(err.toString());
+			  } /*try*/
 			currentOrientation = rotation;
 		  }
-		else
-		  {
-			// Fall back on the deprecated Display#getOrientation method from earlier releases of Android.
-			currentOrientation = mDisplay.getOrientation();
-		  } /*if*/
         
         // Touchscreen type
         touchScreen = mConfig.touchscreen;

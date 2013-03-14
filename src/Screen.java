@@ -26,9 +26,6 @@ package com.jotabout.screeninfo;
  * THE SOFTWARE.
  */
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
@@ -154,8 +151,7 @@ public class Screen {
 			// Usable Screen dimensions
 			try {
 				// Try to get size without the Status bar, if we can (API level 13)
-				final Method getSizeMethod = mDisplay.getClass().getMethod("getSize", Point.class);
-				getSizeMethod.invoke( mDisplay, pt );
+				mDisplay.getClass().getMethod("getSize", Point.class).invoke(mDisplay, pt);
 			} catch (Exception ignore) {
 				// Use older APIs
 				pt.x = mDisplay.getWidth();
@@ -167,9 +163,9 @@ public class Screen {
 			try
 			  {
 				// Total (real) screen dimensions (as of Android 4.2, API 17)
-				final Method getRealMetricsMethod = mDisplay.getClass().getMethod("getRealMetrics", DisplayMetrics.class);
 				DisplayMetrics metrics = new DisplayMetrics();
-				getRealMetricsMethod.invoke(mDisplay, metrics);
+				mDisplay.getClass().getMethod("getRealMetrics", DisplayMetrics.class)
+					.invoke(mDisplay, metrics);
 				pt.x = metrics.widthPixels;
 				pt.y = metrics.heightPixels;
 			  }
@@ -265,8 +261,7 @@ public class Screen {
 		// First, try the Display#getRotation() call, which was introduced in Froyo.
 		// Reference: http://android-developers.blogspot.com/2010/09/one-screen-turn-deserves-another.html
 		try {
-			final Method getRotationMethod = mDisplay.getClass().getMethod("getRotation");
-			rotation = (Integer) getRotationMethod.invoke(mDisplay);
+			rotation = (Integer)mDisplay.getClass().getMethod("getRotation").invoke(mDisplay);
 		}
 		catch (SecurityException ignore) {}
 		catch (NoSuchMethodException ignore) {} 

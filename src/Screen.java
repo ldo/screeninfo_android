@@ -484,7 +484,7 @@ public class Screen {
 						ctx.new InfoMethod(this, "defaultOrientationText", R.string.natural_orientation_label),
 						ctx.new InfoMethod(this, "currentOrientationText", R.string.current_orientation_label),
 						ctx.new InfoMethod(this, "touchScreenText", R.string.touchscreen_label),
-						ctx.new InfoField(this, "densityDpi", R.string.screen_dpi_label),
+						ctx.new InfoField(this, "densityDpi", R.string.nominal_dpi_label),
 						ctx.new InfoField(this, "xdpi", R.string.actual_xdpi_label),
 						ctx.new InfoField(this, "ydpi", R.string.actual_ydpi_label),
 						ctx.new InfoField(this, "density", R.string.logical_density_label),

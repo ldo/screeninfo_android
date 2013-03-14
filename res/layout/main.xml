@@ -221,11 +221,11 @@
 			<!-- Screen DPI -->
 			<TableRow>
 				<TextView
-					android:id="@+id/screen_dpi_label"
+					android:id="@+id/nominal_dpi_label"
 					android:textAppearance="@style/label"
 				    android:layout_marginRight="@dimen/label_spacing"
 					android:gravity="right"
-					android:text="@string/screen_dpi_label"/>
+					android:text="@string/nominal_dpi_label"/>
 				<TextView
 					android:id="@+id/screen_dpi"/>
 			</TableRow>

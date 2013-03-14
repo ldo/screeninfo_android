@@ -135,6 +135,7 @@ public class Screen {
                 String.format(ctx.getString(R.string.nosuch), Value);
 	  } /*GetCodeName*/
 
+	@android.annotation.SuppressLint("NewApi")
 	public Screen( InfoActivity ctx ) {
 		this.ctx = ctx;
 		final android.view.Display mDisplay =
@@ -194,8 +195,24 @@ public class Screen {
 			  }
 			catch (Exception ignore)
 			  {
-				pt.x = (int) (((double) widthPx / mMetrics.density) + 0.5);
-				pt.y = (int) (((double) heightPx / mMetrics.density) + 0.5);
+				pt.x = (int)(
+						(
+							(double)(realWidthPx == UNSUPPORTED ? widthPx : realWidthPx)
+						/
+							mMetrics.density
+						)
+					+
+						0.5
+					);
+				pt.y = (int)(
+						(
+							(double)(realHeightPx == UNSUPPORTED ? heightPx : realHeightPx)
+						/
+							mMetrics.density
+						)
+					+
+						0.5
+					);
 				smallest = pt.x > pt.y ? pt.y : pt.x;
 			  } /*try*/
 			widthDp = pt.x;

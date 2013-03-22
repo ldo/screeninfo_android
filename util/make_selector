@@ -13,7 +13,7 @@ dest_root="${1}"
 for screen_size in "" small normal large xlarge; do
     for screen_aspect in "" long notlong; do
         for screen_orientation in "" port land; do
-            for screen_pixel_density in "" ldpi mdpi hdpi xhdpi tvdpi; do
+            for screen_pixel_density in "" ldpi mdpi hdpi xhdpi xxhdpi tvdpi; do
                 selector="${screen_size}-${screen_aspect}-${screen_orientation}-${screen_pixel_density}"
                 for ((;;)); do
                     selector2="${selector/--/-}"

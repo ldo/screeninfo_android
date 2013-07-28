@@ -29,6 +29,7 @@ package com.jotabout.screeninfo;
 import android.app.Dialog;
 import android.content.Intent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 /**
@@ -53,7 +54,7 @@ public class ScreenInfo extends InfoActivity {
 	// Activity Lifecycle
 	//////////////////////////////////////////////////////////////////////////
 
-    java.util.Map<android.view.MenuItem, Runnable> OptionsMenu;
+    java.util.Map<MenuItem, Runnable> OptionsMenu;
 
     @Override
     public void onCreate(android.os.Bundle savedInstanceState) {
@@ -262,27 +263,117 @@ public class ScreenInfo extends InfoActivity {
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
 
+    private interface MenuItemAdder
+      {
+
+        public MenuItem AddAction
+          (
+            Menu TheMenu,
+            int ItemString,
+            int ItemIcon,
+            int ActionBarUsage
+          );
+
+      } /*MenuItemAdder*/;
+
+    private static class MenuItemAdder_pre_Honeycomb implements MenuItemAdder
+      {
+
+        public MenuItem AddAction
+          (
+            Menu TheMenu,
+            int ItemString,
+            int ItemIcon,
+            int ActionBarUsage /* ignored */
+          )
+          {
+            final MenuItem Result = TheMenu.add(ItemString);
+            if (ItemIcon != 0)
+              {
+                Result.setIcon(ItemIcon);
+              } /*if*/
+            return
+                Result;
+          } /*AddAction*/
+
+      } /*MenuItemAdder_pre_Honeycomb*/;
+
+    private static class MenuItemAdder_post_Gingerbread implements MenuItemAdder
+      {
+
+        public MenuItem AddAction
+          (
+            android.view.Menu TheMenu,
+            int ItemString,
+            int ItemIcon,
+            int ActionBarUsage
+          )
+          {
+            final MenuItem Result = TheMenu.add(ItemString);
+            if (ItemIcon != 0)
+              {
+                Result.setIcon(ItemIcon);
+              } /*if*/
+            Result.setShowAsAction(ActionBarUsage);
+            return
+                Result;
+          } /*AddAction*/
+
+      } /*MenuItemAdder_post_Gingerbread*/;
+
+    private static MenuItemAdder MenuItemAdd = new MenuItemAdder_post_Gingerbread();
+    private static boolean OldAPI = false;
+
     @Override
     public boolean onCreateOptionsMenu
       (
-        android.view.Menu TheMenu
+        Menu TheMenu
       )
       {
-        OptionsMenu = new java.util.HashMap<android.view.MenuItem, Runnable>();
-        OptionsMenu.put
-          (
-            TheMenu.add(R.string.about_menu).setIcon(android.R.drawable.ic_menu_info_details),
-            new Runnable()
+        OptionsMenu = new java.util.HashMap<MenuItem, Runnable>();
+        for (;;)
+          {
+            try
               {
-                public void run()
+                OptionsMenu.put
+                  (
+                    MenuItemAdd.AddAction
+                      (
+                        /*TheMenu =*/ TheMenu,
+                        /*ItemString =*/ R.string.about_menu,
+                        /*ItemIcon =*/ android.R.drawable.ic_menu_info_details,
+                        /*ActionBarUsage =*/ MenuItem.SHOW_AS_ACTION_IF_ROOM
+                      ),
+                    new Runnable()
+                      {
+                        public void run()
+                          {
+                            showDialog(ABOUT_DIALOG);
+                          } /*run*/
+                      } /*Runnable*/
+                  );
+                break;
+              }
+            catch (NoSuchMethodError Fail)
+              {
+                if (OldAPI)
                   {
-					showDialog(ABOUT_DIALOG);
-                  } /*run*/
-              } /*Runnable*/
-          );
+                    throw new RuntimeException(Fail.toString());
+                  } /*if*/
+                TheMenu.clear();
+                MenuItemAdd = new MenuItemAdder_pre_Honeycomb();
+                OldAPI = true;
+              } /*try*/
+          } /*for*/
         OptionsMenu.put
           (
-            TheMenu.add(R.string.share_menu).setIcon(android.R.drawable.ic_menu_share),
+            MenuItemAdd.AddAction
+              (
+                /*TheMenu =*/ TheMenu,
+                /*ItemString =*/ R.string.share_menu,
+                /*ItemIcon =*/ android.R.drawable.ic_menu_share,
+                /*ActionBarUsage =*/ MenuItem.SHOW_AS_ACTION_IF_ROOM
+              ),
             new Runnable()
               {
                 public void run()
@@ -298,7 +389,7 @@ public class ScreenInfo extends InfoActivity {
     @Override
     public boolean onOptionsItemSelected
       (
-        android.view.MenuItem TheItem
+        MenuItem TheItem
       )
       {
         boolean Handled = false;

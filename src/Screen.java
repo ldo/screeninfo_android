@@ -203,7 +203,7 @@ public class Screen {
 			try
 			  {
 				// Screen sizes in device-independent pixels (dp) (as of API 13)
-				final Class<Configuration> ConfigClass = (Class<Configuration>)mConfig.getClass();
+				final Class<? extends Configuration> ConfigClass = (Class<? extends Configuration>)mConfig.getClass();
 				pt.x = ConfigClass.getField("screenWidthDp").getInt(mConfig);
 				pt.y = ConfigClass.getField("screenHeightDp").getInt(mConfig);
 				smallest = ConfigClass.getField("smallestScreenWidthDp").getInt(mConfig);

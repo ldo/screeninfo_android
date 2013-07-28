@@ -98,5 +98,6 @@
 	<string name="hdpi">hdpi</string>
 	<string name="xhdpi">xhdpi</string>
 	<string name="xxhdpi">xxhdpi</string>
+	<string name="xxxhdpi">xxxhdpi</string>
 	<string name="nosuch">\?%d</string>
 </resources>

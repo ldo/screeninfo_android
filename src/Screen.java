@@ -360,7 +360,8 @@ public class Screen {
 			new CodeName(DisplayMetrics.DENSITY_TV, R.string.tvdpi),
 			new CodeName(DisplayMetrics.DENSITY_HIGH, R.string.hdpi),
 			new CodeName(DisplayMetrics.DENSITY_XHIGH, R.string.xhdpi),
-			new CodeName(/*DisplayMetrics.DENSITY_XXHIGH*/ 480, R.string.xxhdpi),
+			new CodeName(DisplayMetrics.DENSITY_XXHIGH, R.string.xxhdpi),
+			new CodeName(DisplayMetrics.DENSITY_XXXHIGH, R.string.xxxhdpi),
 		};
 
 	public String GetDensityName()

@@ -46,8 +46,8 @@
 	<string name="touchscreen_none">None</string>
 	<string name="touchscreen_finger">Finger</string>
 	<string name="touchscreen_stylus">Stylus</string>
-			
-	<string name="natural_orientation_label">Natural Orientation:</string>	
+
+	<string name="natural_orientation_label">Natural Orientation:</string>
 	<string name="current_orientation_label">Current Orientation:</string>
 	<string name="orientation_square">Square</string>
 	<string name="orientation_landscape">Landscape</string>
@@ -77,16 +77,16 @@
 	<string name="nv16">NV16</string>
 
 	<string name="long_wide_label">Long or Wide:</string>
- 
+
 	<string name="pixel_format_label">Pixel Format:</string>
 	<string name="refresh_rate_label">Refresh Rate (fps):</string>
     <string name="total_width_pixels_label">Total Width (px):</string>
     <string name="total_height_pixels_label">Total Height (px):</string>
 
 	<string name="yes">Yes</string>
-	<string name="no">No</string>	
+	<string name="no">No</string>
 	<string name="small">small</string>
-	<string name="normal">normal</string>	
+	<string name="normal">normal</string>
 	<string name="large">large</string>
 	<string name="xlarge">xlarge</string>
 	<string name="undefined">undefined</string>

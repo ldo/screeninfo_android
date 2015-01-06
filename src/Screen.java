@@ -2,21 +2,21 @@ package com.jotabout.screeninfo;
 
 /**
  * ScreenInfo
- * 
+ *
  * Display the screen configuration parameters for an Android device.
- * 
+ *
  * Copyright (c) 2011 Michael J. Portuesi (http://www.jotabout.com)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -37,12 +37,12 @@ import android.view.Surface;
 /**
  * Screen is a model object that summarizes information about the
  * device's display.
- * 
+ *
  * It unifies information from a few disparate Android APIs (Display,
  * DisplayMetrics, Configuration), and derives some additional device
  * statistics.  It also provides helpers to format data as strings
  * for display.
- * 
+ *
  */
 @SuppressWarnings("deprecation")	// Tell Lint to STFU about deprecated APIs - they are necessary for backwards compatibility
 public class Screen {
@@ -51,9 +51,9 @@ public class Screen {
 	private final InfoActivity ctx;
 	private final DisplayMetrics mMetrics;
 	private final Configuration mConfig;
- 	
+
 	public final int mSizeClass;
-	
+
 	public final int widthPx, heightPx;
 	  /* Usable (application-accessible) dimensions of screen in pixels */
 	public final int realWidthPx, realHeightPx;
@@ -81,11 +81,11 @@ public class Screen {
 
     public final int screenLayout;
     public final int touchScreen;
-    
+
     public final int defaultOrientation;
 	 /* Default, or "natural" screen orientation of the device. */
 	public final int currentOrientation;
-        
+
     public final int pixelFormat;
     public final float refreshRate;
 
@@ -144,7 +144,7 @@ public class Screen {
 
         // Screen Size classification
 		mSizeClass = mConfig.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
-		
+
 		  {
 			final Point pt = new Point();
 
@@ -266,7 +266,7 @@ public class Screen {
 		screenHeightSizeInches = Math.floor( screenPhysicalHeight * 10.0 + 0.5 ) / 10.0;
 		screenWidthSizeMillimeters = Math.floor( screenPhysicalWidth * 25.4 + 0.5 );
 		screenHeightSizeMillimeters = Math.floor( screenPhysicalHeight * 25.4 + 0.5 );
-		
+
 		// Calculate diagonal screen size, in both U.S. and Metric units
 		final double xyRawDiagonalSizeInches = Math.sqrt(Math.pow(xyPhysicalWidth, 2) + Math.pow(xyPhysicalHeight, 2));
 		xyDiagonalSizeInches = Math.floor( xyRawDiagonalSizeInches * 10.0 + 0.5 ) / 10.0;
@@ -274,7 +274,7 @@ public class Screen {
 		final double screenRawDiagonalSizeInches = Math.sqrt(Math.pow(screenPhysicalWidth, 2) + Math.pow(screenPhysicalHeight, 2));
 		screenDiagonalSizeInches = Math.floor( screenRawDiagonalSizeInches * 10.0 + 0.5 ) / 10.0;
 		screenDiagonalSizeMillimeters = Math.floor( screenRawDiagonalSizeInches * 25.4 + 0.5 );
-		
+
 		// Long/wide
         screenLayout = mConfig.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK;
         // Orientation
@@ -303,10 +303,10 @@ public class Screen {
 			  } /*try*/
 			currentOrientation = rotation;
 		  }
-        
+
         // Touchscreen type
         touchScreen = mConfig.touchscreen;
-        
+
         // Pixel format (deprecated as of Android 4.2, API 17)
         if ( Build.VERSION.SDK_INT < 17 )
 		  {
@@ -316,11 +316,11 @@ public class Screen {
 		  {
 	        pixelFormat = UNSUPPORTED;
 		  } /*if*/
-		
+
 		// Refresh rate
         refreshRate = mDisplay.getRefreshRate();
 	}
- 	
+
  	/**
 	 * Model name of device.
 	 * @return
@@ -328,16 +328,16 @@ public class Screen {
 	public String deviceModel() {
 		return Build.MODEL;
 	}
-	
+
 	/**
 	 * Version of Android (e.g. "2.3.5").
-	 * 
+	 *
 	 * @return
 	 */
 	public String androidVersion() {
 		return Build.VERSION.RELEASE;
 	}
-	
+
 	private static final CodeName[] SizeCodes = new CodeName[]
 		{
 			new CodeName(Configuration.SCREENLAYOUT_SIZE_SMALL, R.string.small),
@@ -394,7 +394,7 @@ public class Screen {
 			new CodeName(Configuration.SCREENLAYOUT_LONG_NO, R.string.no),
 			new CodeName(Configuration.SCREENLAYOUT_LONG_UNDEFINED, R.string.undefined),
 		};
-	
+
 	/**
 	 * Screen layout, as text
 	 */
@@ -410,7 +410,7 @@ public class Screen {
 			new CodeName(Configuration.ORIENTATION_SQUARE, R.string.orientation_square),
 			new CodeName(Configuration.ORIENTATION_UNDEFINED, R.string.undefined),
 		};
-	
+
 	/**
 	 * Default orientation as text
 	 */
@@ -426,7 +426,7 @@ public class Screen {
 			new CodeName(Surface.ROTATION_180, R.string.degrees_180),
 			new CodeName(Surface.ROTATION_270, R.string.degrees_270),
 		};
-	
+
 	/**
 	 * Current orientation as text
 	 */
@@ -442,7 +442,7 @@ public class Screen {
 			new CodeName(Configuration.TOUCHSCREEN_NOTOUCH, R.string.touchscreen_none),
 			new CodeName(Configuration.TOUCHSCREEN_UNDEFINED, R.string.undefined),
 		};
-	
+
 	/**
 	 * Touchscreen properties as text
 	 */
@@ -474,7 +474,7 @@ public class Screen {
             new CodeName(ImageFormat.YUY2, R.string.yuy2),
             new CodeName(ImageFormat.NV16, R.string.nv16),
         };
-	
+
 	/**
 	 * Pixel format as text
 	 */
@@ -486,7 +486,7 @@ public class Screen {
 	/**
 	 * Return a string containing a text-based summary, suitable
 	 * to share, email, save to SD card, etc.
-	 * 
+	 *
 	 * @return
 	 */
 	public String summaryText() {

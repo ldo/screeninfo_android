@@ -8,6 +8,6 @@ trim: trim
 padding: 15%
 foreground scaling: crop
 shape: square
-background color: #fae909 
+background color: #fae909
 foreground color: black
 better image smoothing selected

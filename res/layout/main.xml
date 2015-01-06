@@ -7,7 +7,7 @@
 		android:orientation="vertical"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content">
-	
+
 		<TableLayout
 			android:id="@+id/device_header"
 			android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
 				<TextView
 					android:id="@+id/device_name"
 				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"/>		
+				    android:layout_height="wrap_content"/>
 			</TableRow>
 			<TableRow>
 				<TextView
@@ -36,19 +36,19 @@
 				    android:textAppearance="@style/label"
 					android:gravity="right"
 			    	android:text="@string/os_version_label"/>
-			    
+
 				<TextView
 					android:id="@+id/os_version"
 				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"/>		
+				    android:layout_height="wrap_content"/>
 			</TableRow>
 		</TableLayout>
-		
+
 		<View
 			android:layout_width="match_parent"
 			android:layout_height="30dp"
 			android:background="@drawable/rule_line"/>
-	
+
 		<LinearLayout
 			android:id="@+id/display"
 			android:orientation="horizontal"
@@ -74,7 +74,7 @@
 				android:text="@string/selector"
 			/>
 	    </LinearLayout>
-		 
+
 		<View
 			android:layout_width="match_parent"
 			android:layout_height="30dp"
@@ -85,7 +85,7 @@
 			android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_marginLeft="20dp">
-			
+
 		    <!-- Total Width (pixels) -->
 			<TableRow>
 				<TextView
@@ -95,7 +95,7 @@
 				    android:gravity="right"
 					android:text="@string/total_width_pixels_label"/>
 				<TextView
-					android:id="@+id/total_width_pixels"/>	
+					android:id="@+id/total_width_pixels"/>
 			</TableRow>
 
 		    <!-- Total Height (pixels) -->
@@ -119,7 +119,7 @@
 					android:gravity="right"
 					android:text="@string/width_pixels_label"/>
 				<TextView
-					android:id="@+id/width_pixels"/>	
+					android:id="@+id/width_pixels"/>
 			</TableRow>
 
 			<!-- App-usable Height (pixels) -->
@@ -143,7 +143,7 @@
 				    android:gravity="right"
 					android:text="@string/width_dp_label"/>
 				<TextView
-					android:id="@+id/width_dp"/>	
+					android:id="@+id/width_dp"/>
 			</TableRow>
 
 		    <!-- Height (dp) -->
@@ -169,8 +169,8 @@
 				<TextView
 					android:id="@+id/smallest_dp"/>
 			</TableRow>
-			
-			<!-- Long or Wide -->		
+
+			<!-- Long or Wide -->
 			<TableRow>
 				<TextView
 					android:id="@+id/long_wide_label"
@@ -426,6 +426,6 @@
 					android:id="@+id/refresh_rate"/>
 			</TableRow>
 		</TableLayout>
-	
+
 	</LinearLayout>
 </ScrollView>
